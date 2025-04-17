@@ -2,6 +2,8 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class Register {
 
@@ -10,5 +12,5 @@ public class Register {
     private String firstName;
     private String lastName;
     private String phone;
-    private Role role;
+    private Set<Role> role;
 }

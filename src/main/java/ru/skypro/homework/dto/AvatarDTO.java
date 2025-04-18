@@ -6,8 +6,5 @@ import lombok.Data;
 public class AvatarDTO {
 
     private Long id;
-    private String filePath;
-    private long fileSize;
-    private String mediaType;
-    private byte[] data;
+    private String image;
 }

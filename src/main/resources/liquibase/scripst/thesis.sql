@@ -15,3 +15,30 @@ CREATE TABLE user_role (
     user_id BIGSERIAL NOT NULL REFERENCES users(id),
     role varchar(20) NOT NULL
 );
+
+-- changeset oss:3
+CREATE TABLE ads(
+    pk BIGSERIAL PRIMARY KEY,
+    title varchar (255) NOT NULL,
+    price INT NOT NULL,
+    description TEXT,
+    user_id BIGINT REFERENCES users(id),
+    image BYTEA
+);
+
+-- changeset oss:4
+CREATE TABLE comments (
+    pk BIGSERIAL PRIMARY KEY,
+    ad_id BIGINT REFERENCES ads(pk),
+    user_id BIGINT REFERENCES users(id),
+    create_at TIMESTAMP,
+    text TEXT
+);
+
+-- changeset oss:5
+CREATE TABLE avatars(
+    id BIGSERIAL PRIMARY KEY,
+    data BYTEA,
+    media_type varchar(255),
+    user_id BIGINT REFERENCES users(id) UNIQUE
+);

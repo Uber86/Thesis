@@ -38,4 +38,7 @@ public class User {
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> role;
+
+    @OneToOne(mappedBy = "user")
+    private Avatar avatar;
 }

@@ -5,8 +5,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Login;
 import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.service.AuthService;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -39,9 +44,43 @@ public class AuthServiceImpl implements AuthService {
                         .passwordEncoder(this.encoder::encode)
                         .password(register.getPassword())
                         .username(register.getUsername())
-                        .roles(register.getRole().name())
+                        .roles(register.getRole().toString())
                         .build());
         return true;
     }
+
+    @Override
+    public boolean setPassword(String userName,  String currentPassword, String newPassword) {
+        if (!manager.userExists(userName)) {
+            return false;
+        }
+        UserDetails user = manager.loadUserByUsername(userName);
+        if (!encoder.matches(currentPassword, user.getPassword())) {
+            return false;
+        }
+        manager.changePassword(
+                currentPassword,
+                encoder.encode(newPassword)
+        );
+        return true;
+    }
+
+    @Override
+    public Register getUserRegisterInfo(String username) {
+        UserDetails userDetails = manager.loadUserByUsername(username);
+
+        Register register = new Register();
+        register.setUsername(userDetails.getUsername());
+
+        Set<Role> roles = userDetails.getAuthorities().stream()
+                .map(auth -> Role.valueOf(auth.getAuthority().replace("ROLE_", "")))
+                .collect(Collectors.toSet());
+        register.setRole(roles);
+
+        return register;
+
+    }
+
+
 
 }

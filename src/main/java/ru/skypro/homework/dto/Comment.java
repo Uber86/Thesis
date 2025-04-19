@@ -5,13 +5,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CommentDTO {
+public class Comment {
 
-    private Long pk;
-    private Long author;
+    private Integer author;
     private String authorImage;
     private String authorFirstName;
     private LocalDateTime createAt;
+    private Integer pk;
     private String text;
 
 }

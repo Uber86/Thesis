@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
                         .build());
         return true;
     }
-
+    /*
     @Override
     public boolean setPassword(String userName,  String currentPassword, String newPassword) {
         if (!manager.userExists(userName)) {
@@ -80,6 +80,8 @@ public class AuthServiceImpl implements AuthService {
         return register;
 
     }
+
+     */
 
 
 

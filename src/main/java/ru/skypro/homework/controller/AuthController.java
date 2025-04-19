@@ -38,7 +38,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
+    /*
     @PostMapping("/users/set_password")
     public ResponseEntity<?> setPassword (@RequestBody NewPassword newPassword) {
         if (authService.setPassword(newPassword.getUsername(), newPassword.getCurrentPassword(), newPassword.getNewPassword())) {
@@ -71,4 +71,6 @@ public class AuthController {
         return ResponseEntity.ok().build();
 
     }
+
+     */
 }

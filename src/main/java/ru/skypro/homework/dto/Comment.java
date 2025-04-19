@@ -13,5 +13,4 @@ public class Comment {
     private LocalDateTime createAt;
     private Integer pk;
     private String text;
-
 }

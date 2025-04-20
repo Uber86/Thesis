@@ -7,10 +7,4 @@ public interface AuthService {
 
     boolean register(Register register);
 
-    /*
-    boolean setPassword(String userName,  String currentPassword, String newPassword);
-
-    Register getUserRegisterInfo(String username);
-
-     */
 }

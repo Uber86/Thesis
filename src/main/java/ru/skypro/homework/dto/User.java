@@ -12,6 +12,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String phone;
-    private List<Role> role;
+    private List<Role>role;
     private String image;
+
 }

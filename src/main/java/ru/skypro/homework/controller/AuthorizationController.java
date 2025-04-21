@@ -33,7 +33,7 @@ public class AuthorizationController {
      *         или 401 (Unauthorized), если учетные данные неверны.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Login login) {
+    public Login login(@RequestBody Login login) {
         if (authService.login(login.getUsername(), login.getPassword())) {
             return ResponseEntity.ok().build();
         } else {

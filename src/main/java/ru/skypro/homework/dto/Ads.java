@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class Ads {
 
-    private Integer count;
-    private List<Ad> ads;
+    private int count;
+    private List<Ad> results;
 }

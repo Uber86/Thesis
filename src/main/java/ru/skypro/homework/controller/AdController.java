@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
 import com.sun.security.auth.UserPrincipal;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
+
+import java.util.List;
 
 /**
  * Контроллер для управления объявлениями.
@@ -23,44 +27,56 @@ public class AdController {
     /**
      * Получает все объявления.
      *
-     * @return ResponseEntity с объектом Ads, содержащим все объявления.
+     * @return объект Ads, содержащим все объявления.
      */
     @GetMapping("/ads")
-    public ResponseEntity<Ads> getAllAds() {
-        return ResponseEntity.ok().build();
+    public Ads getAllAds() {
+        Ads ads = new Ads();
+        return ads;
     }
 
     /**
-     * Добавляет новое объявление.
-     *
-     * @param ad объект объявления, который нужно добавить.
-     * @return ResponseEntity с добавленным объектом Ad.
+     *  Добавляет новое объявление.
+     * @param properties объект объявления, который нужно добавить.
+     * @param image изображение
+     * @return объект ad
      */
     @PostMapping("/ads")
-    public ResponseEntity<Ad> addAd(@RequestBody Ad ad) {
-        return ResponseEntity.ok().build();
+    public Ad addAd(@RequestParam("properties") CreateOrUpdateAd properties,
+                    @RequestParam("image") MultipartFile image) {
+        Ad ad = new Ad();
+        return ad;
     }
 
     /**
      * Получает объявление по его идентификатору.
      *
      * @param id идентификатор объявления.
-     * @return ResponseEntity с объектом Ad, если объявление найдено.
+     * @return extendedAd, если объявление найдено.
      */
     @GetMapping("/ads/{id}")
-    public ResponseEntity<Ad> getAd(@PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+    public ExtendedAd getAd(@PathVariable int id) {
+        ExtendedAd extendedAd = new ExtendedAd();
+        extendedAd.getPk();
+        extendedAd.setAuthorFirstName("String");
+        extendedAd.setAuthorLastName("String");
+        extendedAd.setDescription("String");
+        extendedAd.setEmail("String");
+        extendedAd.setImage("String");
+        extendedAd.setPhone("String");
+        extendedAd.getPrice();
+        extendedAd.setTitle("String");
+        return extendedAd;
     }
 
     /**
      * Удаляет объявление по его идентификатору.
      *
      * @param id идентификатор объявления, которое нужно удалить.
-     * @return ResponseEntity с удаленным объектом Ad.
      */
     @DeleteMapping("/ads/{id}")
-    public ResponseEntity<Ad> deleteAd(@PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+    public void deleteAd(@PathVariable int id) {
+
     }
 
     /**
@@ -68,24 +84,27 @@ public class AdController {
      *
      * @param id идентификатор объявления, которое нужно обновить.
      * @param createOrUpdateAd объект с новыми данными для обновления объявления.
-     * @return ResponseEntity с обновленным объектом Ad.
+     * @return Обновленный объект Ad.
      */
     @PatchMapping("/ads/{id}")
-    public ResponseEntity<Ad> updateAd(
-            @PathVariable("id") Integer id,
+    public Ad updateAd(
+            @PathVariable("id") int id,
             @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        return ResponseEntity.ok().build();
+        Ad ad = new Ad();
+        return ad;
     }
 
     /**
      * Получает объявления текущего пользователя.
      *
      * @param userPrincipal объект пользователя, который аутентифицирован в системе.
-     * @return ResponseEntity с объектом Ads, содержащим объявления текущего пользователя.
+     * @return Объект Ads, содержащим объявления текущего пользователя.
      */
     @GetMapping("/ads/me")
-    public ResponseEntity<Ads> getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return ResponseEntity.ok().build();
+    public Ads getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Ads ads = new Ads();
+
+        return ads;
     }
 
     /**
@@ -97,7 +116,7 @@ public class AdController {
      */
     @PatchMapping("/ads/{id}/image")
     public ResponseEntity<byte[]> updateImage(
-            @PathVariable("id") Integer id,
+            @PathVariable("id") int id,
             @RequestParam("image") MultipartFile image) {
         return ResponseEntity.ok().build();
     }

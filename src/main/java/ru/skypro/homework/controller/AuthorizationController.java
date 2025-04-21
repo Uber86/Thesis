@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.Login;
 import ru.skypro.homework.service.AuthService;
 
+/**
+ * Контроллер для управления авторизацией пользователей.
+ * Предоставляет REST API для входа в систему.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -21,6 +25,13 @@ public class AuthorizationController {
 
     private final AuthService authService;
 
+    /**
+     * Выполняет вход пользователя в систему.
+     *
+     * @param login объект, содержащий имя пользователя и пароль.
+     * @return ResponseEntity с кодом состояния 200 (OK), если вход выполнен успешно,
+     *         или 401 (Unauthorized), если учетные данные неверны.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Login login) {
         if (authService.login(login.getUsername(), login.getPassword())) {
@@ -30,3 +41,4 @@ public class AuthorizationController {
         }
     }
 }
+

@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
+/**
+ * Контроллер для управления процессом регистрации пользователей.
+ * Предоставляет REST API для регистрации новых пользователей.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -21,6 +25,13 @@ public class RegistrationController {
 
     private final AuthService authService;
 
+    /**
+     * Регистрация нового пользователя.
+     *
+     * @param register объект, содержащий данные для регистрации пользователя.
+     * @return ResponseEntity с кодом состояния 201 (Created), если регистрация прошла успешно,
+     *         или 400 (Bad Request), если произошла ошибка при регистрации.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register) {
         if (authService.register(register)) {

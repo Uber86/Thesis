@@ -15,20 +15,34 @@ import java.util.Arrays;
 
 import static ru.skypro.homework.dto.Role.USER;
 
-
+/**
+ * Контроллер для управления пользователями.
+ * Предоставляет REST API для работы с информацией о пользователе.
+ */
 @RestController
 @Tag(name = "Пользователи")
 @RequiredArgsConstructor
 public class UsersController {
 
+    /**
+     * Устанавливает новый пароль для пользователя.
+     *
+     * @param newPassword объект, содержащий новый пароль.
+     * @return ResponseEntity с кодом состояния 200 (OK) после успешного изменения пароля.
+     */
     @PostMapping("/set_password")
-    public ResponseEntity<NewPassword> setPassword (@RequestBody NewPassword newPassword) {
+    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
         return ResponseEntity.status(HttpStatus.OK).build();
-
     }
 
+    /**
+     * Получает информацию о текущем пользователе.
+     *
+     * @return ResponseEntity с объектом User, содержащим информацию о пользователе,
+     *         и кодом состояния 200 (OK).
+     */
     @GetMapping("/users/me")
-    public ResponseEntity<User> getUserInfo(){
+    public ResponseEntity<User> getUserInfo() {
         User user = new User();
         user.setId(0);
         user.setEmail("String");
@@ -36,21 +50,31 @@ public class UsersController {
         user.setLastName("String");
         user.setPhone("String");
         user.setRole(Arrays.asList(USER));
-        user.setImage ("String");
+        user.setImage("String");
         return ResponseEntity.ok(user);
     }
 
+    /**
+     * Обновляет информацию о текущем пользователе.
+     *
+     * @param updateUser объект, содержащий обновленные данные пользователя.
+     * @return ResponseEntity с объектом UpdateUser и кодом состояния 200 (OK) после успешного обновления.
+     */
     @PatchMapping("/users/me")
-    public ResponseEntity<UpdateUser> updateUserInfo (@RequestBody UpdateUser updateUser) {
-
+    public ResponseEntity<UpdateUser> updateUserInfo(@RequestBody UpdateUser updateUser) {
         return ResponseEntity.ok(updateUser);
     }
 
+    /**
+     * Обновляет изображение профиля текущего пользователя.
+     *
+     * @param imageFile файл изображения, который необходимо загрузить.
+     * @return ResponseEntity с сообщением об успешном обновлении изображения и кодом состояния 200 (OK).
+     */
     @PatchMapping("/users/me/image")
-    public ResponseEntity<String> updateUserImage(@Parameter(
-            description ="Файл изображения для обновления", required = true)
-                                                      @RequestParam ("image")
-                                                  MultipartFile imageFile) {
+    public ResponseEntity<String> updateUserImage(
+            @Parameter(description = "Файл изображения для обновления", required = true)
+            @RequestParam("image") MultipartFile imageFile) {
 
         return ResponseEntity.ok(String.valueOf(imageFile));
     }

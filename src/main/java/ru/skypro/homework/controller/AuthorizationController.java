@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import ru.skypro.homework.dto.Login;
 import ru.skypro.homework.service.AuthService;
 
@@ -35,9 +36,10 @@ public class AuthorizationController {
     @PostMapping("/login")
     public Login login(@RequestBody Login login) {
         if (authService.login(login.getUsername(), login.getPassword())) {
-            return ResponseEntity.ok().build();
+            return login;
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new
+                    ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
 }

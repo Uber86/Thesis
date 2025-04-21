@@ -90,8 +90,7 @@ public class AdController {
     public Ad updateAd(
             @PathVariable("id") int id,
             @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        Ad ad = new Ad();
-        return ad;
+        return new Ad();
     }
 
     /**
@@ -102,8 +101,7 @@ public class AdController {
      */
     @GetMapping("/ads/me")
     public Ads getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Ads ads = new Ads();
-        return ads;
+        return new Ads();
     }
 
     /**

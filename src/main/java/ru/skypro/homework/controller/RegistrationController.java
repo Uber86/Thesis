@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
@@ -33,11 +34,12 @@ public class RegistrationController {
      *         или 400 (Bad Request), если произошла ошибка при регистрации.
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Register register) {
+    public Register register(@RequestBody Register register) {
         if (authService.register(register)) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return register;
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            throw new
+                    ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 }

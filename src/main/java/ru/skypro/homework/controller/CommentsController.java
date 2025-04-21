@@ -21,11 +21,11 @@ public class CommentsController {
      * Получает все комментарии для указанного объявления.
      *
      * @param id идентификатор объявления, для которого необходимо получить комментарии.
-     * @return ResponseEntity с кодом состояния 200 (OK) и списком комментариев.
+     * @return список комментариев.
      */
     @GetMapping("/ads/{id}/comments")
-    public ResponseEntity<Comments> getCommendsAd(@PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+    public Comments getCommendsAd(@PathVariable int id) {
+        return new Comments();
     }
 
     /**
@@ -33,12 +33,13 @@ public class CommentsController {
      *
      * @param id идентификатор объявления, к которому добавляется комментарий.
      * @param createOrUpdateComment объект, содержащий данные нового комментария.
-     * @return ResponseEntity с кодом состояния 200 (OK) и добавленным комментарием.
+     * @return добавлены комментарии.
      */
     @PostMapping("/ads/{id}/comments")
-    public ResponseEntity<Comment> addCommentAd(@PathVariable("id") Integer id,
-                                                @RequestBody CreateOrUpdateComment createOrUpdateComment) {
-        return ResponseEntity.ok().build();
+    public Comment addCommentAd(@PathVariable("id") int id,
+                                                @RequestBody CreateOrUpdateComment
+                                                        createOrUpdateComment) {
+        return new Comment();
     }
 
     /**
@@ -46,12 +47,11 @@ public class CommentsController {
      *
      * @param adId идентификатор объявления, из которого удаляется комментарий.
      * @param commentId идентификатор удаляемого комментария.
-     * @return ResponseEntity с кодом состояния 200 (OK), если удаление прошло успешно.
      */
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> deleteCommentAd(@PathVariable("adId") Integer adId,
-                                                   @PathVariable("commentId") Integer commentId) {
-        return ResponseEntity.ok().build();
+    public  void  deleteCommentAd(@PathVariable("adId") int adId,
+                                                   @PathVariable("commentId") int commentId) {
+
     }
 
     /**
@@ -60,12 +60,13 @@ public class CommentsController {
      * @param adId идентификатор объявления, к которому относится обновляемый комментарий.
      * @param commentId идентификатор обновляемого комментария.
      * @param createOrUpdateComment объект, содержащий обновленные данные комментария.
-     * @return ResponseEntity с кодом состояния 200 (OK) и обновленным комментарием.
+     * @return обновленное комментарии.
      */
     @PatchMapping("/ads/{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> updateCommentAd(@PathVariable("adId") Integer adId,
-                                                   @PathVariable("commentId") Integer commentId,
-                                                   @RequestBody CreateOrUpdateComment createOrUpdateComment) {
-        return ResponseEntity.ok().build();
+    public Comment updateCommentAd(@PathVariable("adId") int adId,
+                                                   @PathVariable("commentId") int commentId,
+                                                   @RequestBody CreateOrUpdateComment
+                                                              createOrUpdateComment) {
+        return new Comment();
     }
 }

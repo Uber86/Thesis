@@ -103,7 +103,6 @@ public class AdController {
     @GetMapping("/ads/me")
     public Ads getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         Ads ads = new Ads();
-
         return ads;
     }
 

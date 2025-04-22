@@ -51,7 +51,6 @@ public class CommentsController {
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
     public  void  deleteCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId) {
-
     }
 
     /**

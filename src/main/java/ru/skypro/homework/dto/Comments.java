@@ -4,9 +4,22 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Класс, представляющий коллекцию комментариев (Comments).
+ * <p>
+ * Содержит общее количество комментариев и список самих комментариев.
+ * </p>
+ */
 @Data
 public class Comments {
-    private int count;
-    private List<Comment> comments;
 
+    /**
+     * Общее количество комментариев.
+     */
+    private int count;
+
+    /**
+     * Список комментариев.
+     */
+    private List<Comment> comments;
 }

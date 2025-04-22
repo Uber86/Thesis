@@ -31,8 +31,7 @@ public class AdController {
      */
     @GetMapping("/ads")
     public Ads getAllAds() {
-        Ads ads = new Ads();
-        return ads;
+        return new Ads();
     }
 
     /**
@@ -44,8 +43,7 @@ public class AdController {
     @PostMapping("/ads")
     public Ad addAd(@RequestParam("properties") CreateOrUpdateAd properties,
                     @RequestParam("image") MultipartFile image) {
-        Ad ad = new Ad();
-        return ad;
+        return new Ad();
     }
 
     /**
@@ -56,17 +54,7 @@ public class AdController {
      */
     @GetMapping("/ads/{id}")
     public ExtendedAd getAd(@PathVariable int id) {
-        ExtendedAd extendedAd = new ExtendedAd();
-        extendedAd.getPk();
-        extendedAd.setAuthorFirstName("String");
-        extendedAd.setAuthorLastName("String");
-        extendedAd.setDescription("String");
-        extendedAd.setEmail("String");
-        extendedAd.setImage("String");
-        extendedAd.setPhone("String");
-        extendedAd.getPrice();
-        extendedAd.setTitle("String");
-        return extendedAd;
+        return new ExtendedAd();
     }
 
     /**

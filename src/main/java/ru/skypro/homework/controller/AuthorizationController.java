@@ -30,7 +30,7 @@ public class AuthorizationController {
      * Выполняет вход пользователя в систему.
      *
      * @param login объект, содержащий имя пользователя и пароль.
-     * @return ResponseEntity с кодом состояния 200 (OK), если вход выполнен успешно,
+     * @return вход выполнен успешно,
      *         или 401 (Unauthorized), если учетные данные неверны.
      */
     @PostMapping("/login")

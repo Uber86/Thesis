@@ -43,13 +43,6 @@ public class UsersController {
     @GetMapping("/users/me")
     public User getUserInfo() {
         User user = new User();
-        user.setId(0);
-        user.setEmail("String");
-        user.setFirstName("String");
-        user.setLastName("String");
-        user.setPhone("String");
-        user.setRole(Arrays.asList(USER));
-        user.setImage("String");
         return user;
     }
 

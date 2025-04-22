@@ -30,7 +30,7 @@ public class RegistrationController {
      * Регистрация нового пользователя.
      *
      * @param register объект, содержащий данные для регистрации пользователя.
-     * @return ResponseEntity с кодом состояния 201 (Created), если регистрация прошла успешно,
+     * @return Регистрация прошла успешно,
      *         или 400 (Bad Request), если произошла ошибка при регистрации.
      */
     @PostMapping("/register")

@@ -35,10 +35,4 @@ CREATE TABLE comments (
     text TEXT
 );
 
--- changeset oss:5
-CREATE TABLE avatars(
-    id BIGSERIAL PRIMARY KEY,
-    data BYTEA,
-    media_type varchar(255),
-    user_id BIGINT REFERENCES users(id) UNIQUE
-);
+

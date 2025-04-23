@@ -20,6 +20,7 @@ import java.util.List;
  * Предоставляет REST API для создания, получения, обновления и удаления объявлений.
  */
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Объявления")
 @RequiredArgsConstructor
 public class AdController {

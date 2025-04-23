@@ -31,4 +31,23 @@ public class NewPassword {
      */
     @Size(min = 8, max = 16, message = "Минимальное количество символов 8, максимальное количество символов 16")
     private String newPassword;
+
+    public NewPassword() {
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 }

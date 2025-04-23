@@ -13,6 +13,7 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
  * Предоставляет REST API для получения, добавления, удаления и обновления комментариев.
  */
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Комментарии")
 @RequiredArgsConstructor
 public class CommentsController {

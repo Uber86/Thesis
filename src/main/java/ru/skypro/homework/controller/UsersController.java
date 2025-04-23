@@ -20,6 +20,7 @@ import static ru.skypro.homework.dto.Role.USER;
  * Предоставляет REST API для работы с информацией о пользователе.
  */
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Пользователи")
 @RequiredArgsConstructor
 public class UsersController {

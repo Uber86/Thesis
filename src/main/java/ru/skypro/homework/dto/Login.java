@@ -31,4 +31,23 @@ public class Login {
      */
     @Size(min = 4, max = 32, message = "Минимальное количество символов 4, максимальное количество символов 32")
     private String username;
+
+    public Login() {
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

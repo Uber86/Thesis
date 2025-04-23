@@ -39,4 +39,31 @@ public class CreateOrUpdateAd {
      */
     @Size(min = 8, max = 64, message = "Минимальное количество символов 8, максимальное количество символов 64")
     private String description;
+
+    public CreateOrUpdateAd() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

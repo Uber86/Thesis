@@ -21,4 +21,15 @@ public class CreateOrUpdateComment {
      */
     @Size(min = 8, max = 32, message = "Минимальное количество символов 8, максимальное количество символов 32")
     private String text;
+
+    public CreateOrUpdateComment() {
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

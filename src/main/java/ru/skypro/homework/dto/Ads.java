@@ -23,4 +23,23 @@ public class Ads {
      * Список объявлений.
      */
     private List<Ad> results;
+
+    public Ads() {
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public List<Ad> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Ad> results) {
+        this.results = results;
+    }
 }

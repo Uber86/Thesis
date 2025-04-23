@@ -10,8 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Класс BasicAuthCorsFilter наследует класс OncePerRequestFilter
+ * предназначен для добавления заголовка в каждый ответ сервера
+ */
 @Component
 public class BasicAuthCorsFilter extends OncePerRequestFilter {
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,

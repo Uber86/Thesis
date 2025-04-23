@@ -13,6 +13,9 @@ import ru.skypro.homework.dto.Role;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Класс WebSecurityConfig отвечает за конфигурацию безопасности
+ */
 @Configuration
 public class WebSecurityConfig {
 
@@ -58,5 +61,4 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

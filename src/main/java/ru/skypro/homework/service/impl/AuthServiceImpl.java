@@ -5,8 +5,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Login;
 import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.service.AuthService;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -39,9 +44,8 @@ public class AuthServiceImpl implements AuthService {
                         .passwordEncoder(this.encoder::encode)
                         .password(register.getPassword())
                         .username(register.getUsername())
-                        .roles(register.getRole().name())
+                        .roles(register.getRole().toString())
                         .build());
         return true;
     }
-
 }

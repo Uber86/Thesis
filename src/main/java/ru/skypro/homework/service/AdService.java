@@ -7,9 +7,12 @@ import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.mapper.AdMapper;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 @Service
 @RequiredArgsConstructor
 public class AdService {
+    /*
     private final AdRepository adRepository;
     private final AdMapper adMapper;
 
@@ -23,4 +26,6 @@ public class AdService {
         AdModel adModel = adRepository.findById(id).orElseThrow();
         return adMapper.toDto(adModel);
     }
+
+     */
 }

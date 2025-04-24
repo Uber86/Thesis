@@ -1,16 +1,16 @@
 package ru.skypro.homework.model;
 
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@Entity(name = "AdModel")
 @Table(name = "ads")
 public class AdModel {
 
     @Id
+    @Column(name = "pk")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
@@ -30,7 +30,7 @@ public class AdModel {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "ads")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
     public AdModel() {

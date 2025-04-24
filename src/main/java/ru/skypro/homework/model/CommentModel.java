@@ -1,22 +1,20 @@
 package ru.skypro.homework.model;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
+@Entity(name = "CommentModel")
 @Table(name = "comments")
 public class CommentModel {
 
     @Id
+    @Column(name = "pk")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
     @ManyToOne
-    @JoinColumn(name = "ad_pk")
+    @JoinColumn(name = "ad_id")
     private AdModel ad;
 
     @ManyToOne

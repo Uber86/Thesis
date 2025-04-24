@@ -1,7 +1,5 @@
 package ru.skypro.homework.model;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
@@ -9,11 +7,12 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Entity
+@Entity(name = "UserModel")
 @Table(name = "users")
 public class UserModel {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -51,10 +50,10 @@ public class UserModel {
     @Column(name = "image")
     private String image;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdModel> ads;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
     public UserModel() {

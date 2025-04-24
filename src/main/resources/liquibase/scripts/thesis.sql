@@ -13,12 +13,6 @@ CREATE TABLE users (
 );
 
 -- changeset oss:2
-CREATE TABLE user_role (
-    user_id BIGSERIAL NOT NULL REFERENCES users(id),
-    role varchar(20) NOT NULL
-);
-
--- changeset oss:3
 CREATE TABLE ads(
     pk BIGSERIAL PRIMARY KEY,
     title varchar (255) ,
@@ -28,7 +22,7 @@ CREATE TABLE ads(
     image varchar(255)
 );
 
--- changeset oss:4
+-- changeset oss:3
 CREATE TABLE comments (
     pk BIGSERIAL PRIMARY KEY,
     ad_id BIGSERIAL REFERENCES ads(pk),
@@ -36,5 +30,17 @@ CREATE TABLE comments (
     create_at TIMESTAMP,
     text TEXT
 );
+
+-- changeset oss:4
+CREATE TABLE user_role (
+    user_id BIGSERIAL NOT NULL REFERENCES users(id),
+    role varchar(20) NOT NULL
+);
+
+
+
+
+
+
 
 

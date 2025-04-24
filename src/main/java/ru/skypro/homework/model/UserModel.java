@@ -42,7 +42,6 @@ public class UserModel {
      * параметр joinColumns указывает на какое поле будет подвязана роль в данном случаи user_id
      * Аннотация @Enumerated(EnumType.STRING) указываем, что enum будем хранить в виде строки
      */
-    @Enumerated(EnumType.STRING)
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     //@Enumerated(EnumType.STRING)

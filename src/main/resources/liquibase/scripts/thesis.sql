@@ -14,7 +14,7 @@ CREATE TABLE users (
 
 -- changeset oss:2
 CREATE TABLE user_role (
-    user_id BIGINT NOT NULL REFERENCES users(id),
+    user_id BIGSERIAL NOT NULL REFERENCES users(id),
     role varchar(20) NOT NULL
 );
 
@@ -22,8 +22,8 @@ CREATE TABLE user_role (
 CREATE TABLE ads(
     pk BIGSERIAL PRIMARY KEY,
     title varchar (255) ,
-    price INT ,
-    description TEXT,
+    price INT NOT NULL,
+    description TEXT NOT NULL,
     user_id BIGSERIAL REFERENCES users(id),
     image varchar(255)
 );
@@ -31,8 +31,8 @@ CREATE TABLE ads(
 -- changeset oss:4
 CREATE TABLE comments (
     pk BIGSERIAL PRIMARY KEY,
-    ad_id BIGINT REFERENCES ads(pk),
-    user_id BIGINT REFERENCES users(id),
+    ad_id BIGSERIAL REFERENCES ads(pk),
+    user_id BIGSERIAL REFERENCES users(id),
     create_at TIMESTAMP,
     text TEXT
 );

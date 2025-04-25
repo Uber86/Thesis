@@ -13,6 +13,7 @@ public interface AdMapper {
     @Mapping(target = "image", source = "image")
     Ad toDto(AdModel adModel);
 
+
     @Mapping(target = "author.id", source = "author")
     @Mapping(target = "image", source = "image")
     AdModel toModel(Ad ad);

@@ -12,7 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 @Service
 @RequiredArgsConstructor
 public class AdService {
-    /*
+
     private final AdRepository adRepository;
     private final AdMapper adMapper;
 
@@ -27,5 +27,5 @@ public class AdService {
         return adMapper.toDto(adModel);
     }
 
-     */
+
 }

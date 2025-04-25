@@ -8,14 +8,14 @@ import ru.skypro.homework.model.AdModel;
 
 @Mapper (componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AdMapper {
-    /*
+
     @Mapping(target = "author", source = "author.id")
-    @Mapping(target = "image", source = "imageAd")
+    @Mapping(target = "image", source = "image")
     Ad toDto(AdModel adModel);
 
     @Mapping(target = "author.id", source = "author")
-    @Mapping(target = "imageAd", source = "image")
+    @Mapping(target = "image", source = "image")
     AdModel toModel(Ad ad);
 
-     */
+
 }

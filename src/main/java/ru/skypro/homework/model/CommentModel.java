@@ -17,11 +17,11 @@ public class CommentModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ad_id")
     private AdModel ad;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserModel author;
 
@@ -31,21 +31,9 @@ public class CommentModel {
     @Column(name = "text")
     private String text;
 
-    /**
-     * Конструктор по умолчанию для CommentModel.
-     */
     public CommentModel() {
     }
 
-    /**
-     * Конструктор CommentModel с заданными параметрами.
-     *
-     * @param pk       первичный ключ комментария
-     * @param ad       объявление, к которому относится комментарий
-     * @param author   автор комментария
-     * @param createAt дата и время создания комментария
-     * @param text     текст комментария
-     */
     public CommentModel(Long pk, AdModel ad,
                         UserModel author, LocalDateTime createAt,
                         String text) {
@@ -56,7 +44,6 @@ public class CommentModel {
         this.text = text;
     }
 
-    // Геттеры и Сеттеры
 
     public Long getPk() {
         return pk;
@@ -98,7 +85,7 @@ public class CommentModel {
         this.text = text;
     }
 
-    // Переопределенные методы
+
 
     @Override
     public boolean equals(Object o) {

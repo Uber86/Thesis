@@ -18,7 +18,7 @@ public class AdModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "user_id")
     private UserModel author;
 
@@ -37,23 +37,11 @@ public class AdModel {
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
-    /**
-     * Конструктор по умолчанию для AdModel.
-     */
+
     public AdModel() {
     }
 
-    /**
-     * Конструктор AdModel с заданными параметрами.
-     *
-     * @param pk         первичный ключ объявления
-     * @param author     автор объявления
-     * @param image      изображение, связанное с объявлением
-     * @param price      цена объявления
-     * @param title      заголовок объявления
-     * @param description описание объявления
-     * @param comments   список комментариев, связанных с этим объявлением
-     */
+
     public AdModel(Long pk, UserModel author,
                    String image, int price,
                    String title, String description,
@@ -67,7 +55,7 @@ public class AdModel {
         this.comments = comments;
     }
 
-    // Геттеры и Сеттеры
+
 
     public Long getPk() {
         return pk;
@@ -127,7 +115,7 @@ public class AdModel {
         this.comments = comments;
     }
 
-    // Переопределенные методы
+
 
     @Override
     public boolean equals(Object o) {

@@ -35,14 +35,9 @@ public class UserModel {
     private String phone;
 
     /**
-     *Аннотация @ElementCollection хранение базовых или встраиваемых типов в отдельной таблице для Role.class
-     * параметр fetch для жадной подгрузки данных
-     * Аннотация @CollectionTable указывает что указанное поле будет храниться в отдельной таблице,
-     * параметр joinColumns указывает на какое поле будет подвязана роль в данном случаи user_id
      * Аннотация @Enumerated(EnumType.STRING) указываем, что enum будем хранить в виде строки
      */
-    //@ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    //@CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;

@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.repository.AdRepository;
-import ru.skypro.homework.service.mapper.AdMapper;
+import ru.skypro.homework.mapper.AdMapper;
 
-import javax.persistence.criteria.CriteriaBuilder;
 
 @Service
 @RequiredArgsConstructor

@@ -7,7 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.model.UserModel;
-import ru.skypro.homework.service.mapper.AdMapper;
+import ru.skypro.homework.mapper.AdMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

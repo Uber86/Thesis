@@ -9,6 +9,7 @@ CREATE TABLE users (
     first_name varchar(16) NOT NULL,
     last_name varchar(16) NOT NULL,
     phone varchar(12) NOT NULL,
+    role varchar(6) NOT NULL,
     image varchar(255)
 );
 
@@ -31,11 +32,7 @@ CREATE TABLE comments (
     text TEXT
 );
 
--- changeset oss:4
-CREATE TABLE user_role (
-    user_id BIGSERIAL NOT NULL REFERENCES users(id),
-    role varchar(20) NOT NULL
-);
+
 
 
 

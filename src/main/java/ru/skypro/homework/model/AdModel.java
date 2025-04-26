@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity(name = "AdModel")
+@Entity
 @Table(name = "ads")
 public class AdModel {
 
@@ -30,7 +30,7 @@ public class AdModel {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
     public AdModel() {

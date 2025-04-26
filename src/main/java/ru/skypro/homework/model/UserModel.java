@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-@Entity(name = "UserModel")
+@Entity
 @Table(name = "users")
 public class UserModel {
 
@@ -41,19 +41,19 @@ public class UserModel {
      * параметр joinColumns указывает на какое поле будет подвязана роль в данном случаи user_id
      * Аннотация @Enumerated(EnumType.STRING) указываем, что enum будем хранить в виде строки
      */
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    //@Enumerated(EnumType.STRING)
+    //@ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    //@CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private List<Role> role;
+    private Role role;
 
     @Column(name = "image")
     private String image;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdModel> ads;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
     public UserModel() {
@@ -62,7 +62,7 @@ public class UserModel {
     public UserModel(Long id, String email, String username,
                      String password, String firstName,
                      String lastName, String phone,
-                     List<Role> role, String image,
+                     Role role, String image,
                      List<AdModel> ads, List<CommentModel> comments) {
         this.id = id;
         this.email = email;
@@ -133,11 +133,11 @@ public class UserModel {
         this.phone = phone;
     }
 
-    public List<Role> getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(List<Role> role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -170,12 +170,24 @@ public class UserModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserModel userModel = (UserModel) o;
-        return Objects.equals(id, userModel.id) && Objects.equals(email, userModel.email) && Objects.equals(username, userModel.username) && Objects.equals(password, userModel.password) && Objects.equals(firstName, userModel.firstName) && Objects.equals(lastName, userModel.lastName) && Objects.equals(phone, userModel.phone) && Objects.equals(role, userModel.role) && Objects.equals(image, userModel.image) && Objects.equals(ads, userModel.ads) && Objects.equals(comments, userModel.comments);
+        return Objects.equals(id, userModel.id) &&
+                Objects.equals(email, userModel.email) &&
+                Objects.equals(username, userModel.username) &&
+                Objects.equals(password, userModel.password) &&
+                Objects.equals(firstName, userModel.firstName) &&
+                Objects.equals(lastName, userModel.lastName) &&
+                Objects.equals(phone, userModel.phone) &&
+                Objects.equals(role, userModel.role) &&
+                Objects.equals(image, userModel.image) &&
+                Objects.equals(ads, userModel.ads) &&
+                Objects.equals(comments, userModel.comments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, username, password, firstName, lastName, phone, role, image, ads, comments);
+        return Objects.hash(id, email, username,
+                password, firstName, lastName, phone,
+                role, image, ads, comments);
     }
 
     @Override

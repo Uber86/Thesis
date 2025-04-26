@@ -5,6 +5,10 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Представляет модель объявления в системе.
+ * Этот класс отображается на таблицу "ads" в базе данных.
+ */
 @Entity
 @Table(name = "ads")
 public class AdModel {
@@ -33,9 +37,23 @@ public class AdModel {
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
+    /**
+     * Конструктор по умолчанию для AdModel.
+     */
     public AdModel() {
     }
 
+    /**
+     * Конструктор AdModel с заданными параметрами.
+     *
+     * @param pk         первичный ключ объявления
+     * @param author     автор объявления
+     * @param image      изображение, связанное с объявлением
+     * @param price      цена объявления
+     * @param title      заголовок объявления
+     * @param description описание объявления
+     * @param comments   список комментариев, связанных с этим объявлением
+     */
     public AdModel(Long pk, UserModel author,
                    String image, int price,
                    String title, String description,
@@ -49,9 +67,13 @@ public class AdModel {
         this.comments = comments;
     }
 
+    // Геттеры и Сеттеры
+
     public Long getPk() {
         return pk;
     }
+
+
 
     public void setPk(Long pk) {
         this.pk = pk;
@@ -104,6 +126,8 @@ public class AdModel {
     public void setComments(List<CommentModel> comments) {
         this.comments = comments;
     }
+
+    // Переопределенные методы
 
     @Override
     public boolean equals(Object o) {

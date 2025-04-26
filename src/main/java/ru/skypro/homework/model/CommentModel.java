@@ -4,6 +4,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Представляет модель комментария в системе.
+ * Этот класс отображается на таблицу "comments" в базе данных.
+ */
 @Entity
 @Table(name = "comments")
 public class CommentModel {
@@ -27,9 +31,21 @@ public class CommentModel {
     @Column(name = "text")
     private String text;
 
+    /**
+     * Конструктор по умолчанию для CommentModel.
+     */
     public CommentModel() {
     }
 
+    /**
+     * Конструктор CommentModel с заданными параметрами.
+     *
+     * @param pk       первичный ключ комментария
+     * @param ad       объявление, к которому относится комментарий
+     * @param author   автор комментария
+     * @param createAt дата и время создания комментария
+     * @param text     текст комментария
+     */
     public CommentModel(Long pk, AdModel ad,
                         UserModel author, LocalDateTime createAt,
                         String text) {
@@ -39,6 +55,8 @@ public class CommentModel {
         this.createAt = createAt;
         this.text = text;
     }
+
+    // Геттеры и Сеттеры
 
     public Long getPk() {
         return pk;
@@ -79,6 +97,8 @@ public class CommentModel {
     public void setText(String text) {
         this.text = text;
     }
+
+    // Переопределенные методы
 
     @Override
     public boolean equals(Object o) {

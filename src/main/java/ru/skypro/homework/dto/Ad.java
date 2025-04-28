@@ -10,7 +10,7 @@ import lombok.Data;
  * </p>
  */
 @Data
-public class Ad {
+public class Ad extends ExtendedAd {
 
     /**
      * Идентификатор автора объявления.

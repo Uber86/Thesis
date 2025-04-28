@@ -12,6 +12,7 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.service.AdService;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdController {
 
+    private final AdService adService;
+
     /**
      * Получает все объявления.
      *
@@ -32,7 +35,7 @@ public class AdController {
      */
     @GetMapping("/ads")
     public Ads getAllAds() {
-        return new Ads();
+        return adService.getAllAds();
     }
 
     /**
@@ -44,7 +47,7 @@ public class AdController {
     @PostMapping("/ads")
     public Ad addAd(@RequestParam("properties") CreateOrUpdateAd properties,
                     @RequestParam("image") MultipartFile image) {
-        return new Ad();
+        return adService.addAd(properties, image);
     }
 
     /**
@@ -55,7 +58,7 @@ public class AdController {
      */
     @GetMapping("/ads/{id}")
     public ExtendedAd getAd(@PathVariable int id) {
-        return new ExtendedAd();
+        return adService.getAd(id);
     }
 
     /**
@@ -65,6 +68,7 @@ public class AdController {
      */
     @DeleteMapping("/ads/{id}")
     public void deleteAd(@PathVariable int id) {
+        adService.deleteAd(id);
 
     }
 
@@ -79,7 +83,7 @@ public class AdController {
     public Ad updateAd(
             @PathVariable("id") int id,
             @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        return new Ad();
+        return adService.updateAd(id, createOrUpdateAd);
     }
 
     /**
@@ -90,7 +94,8 @@ public class AdController {
      */
     @GetMapping("/ads/me")
     public Ads getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return new Ads();
+        int userId = Integer.parseInt(userPrincipal.getName());
+        return adService.getAdsByUserId(userId);
     }
 
     /**
@@ -104,6 +109,7 @@ public class AdController {
     public ResponseEntity<byte[]> updateImage(
             @PathVariable("id") int id,
             @RequestParam("image") MultipartFile image) {
-        return ResponseEntity.ok().build();
+        byte[] updatedImage = adService.updateImage(id, image);
+        return ResponseEntity.ok(updatedImage);
     }
 }

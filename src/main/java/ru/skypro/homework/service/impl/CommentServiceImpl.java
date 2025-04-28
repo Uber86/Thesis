@@ -1,4 +1,4 @@
 package ru.skypro.homework.service.impl;
 
-public class CommentSeviceImpl {
+public class CommentServiceImpl {
 }

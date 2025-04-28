@@ -42,7 +42,7 @@ public class User {
     /**
      * Список ролей пользователя.
      */
-    private List<Role> role;
+    private Role role;
 
     /**
      * URL изображения профиля пользователя.
@@ -92,11 +92,11 @@ public class User {
         this.phone = phone;
     }
 
-    public List<Role> getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(List<Role> role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

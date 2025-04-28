@@ -39,7 +39,7 @@ public class UsersController {
     /**
      * Получает информацию о текущем пользователе.
      *
-     * @return объект User, содержащим информацию о пользователе,.
+     * @return объект User, содержащим информацию о пользователе.
      */
     @GetMapping("/users/me")
     public User getUserInfo() {

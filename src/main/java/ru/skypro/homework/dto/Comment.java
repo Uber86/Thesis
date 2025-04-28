@@ -1,6 +1,5 @@
 package ru.skypro.homework.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;

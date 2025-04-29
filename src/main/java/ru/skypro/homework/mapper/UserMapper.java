@@ -3,6 +3,10 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.model.UserModel;
 
@@ -52,19 +56,22 @@ public interface UserMapper {
     @Mapping(target = "comments", ignore = true)
     UserModel toModel(User user);
 
-    /**
-     * Преобразует список объектов UserModel в список DTO User.
-     *
-     * @param userModels список объектов UserModel для преобразования
-     * @return список преобразованных DTO User
-     */
-    List<User> toDtoList(List<UserModel> userModels);
 
-    /**
-     * Преобразует список объектов User в список объектов UserModel.
-     *
-     * @param users список объектов User для преобразования
-     * @return список преобразованных объектов UserModel
-     */
-    List<UserModel> toModelList(List<User> users);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "firstName", ignore = true)
+    @Mapping(target = "lastName", ignore = true)
+    @Mapping(target = "phone", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "image", ignore = true)
+    @Mapping(target = "ads", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    void updatePasswordFromDto(String newPassword, @MappingTarget UserModel userModel);
+
+    @Mapping(target = "firstName", source = "firstName")
+    @Mapping(target = "lastName", source = "lastName")
+    @Mapping(target = "phone", source = "phone")
+    UpdateUser toUpdateUserDto(UserModel userModel);
+
 }

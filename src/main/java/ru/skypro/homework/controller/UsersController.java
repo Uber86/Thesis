@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.service.UserService;
 
 import java.util.Arrays;
 
@@ -24,6 +25,7 @@ import static ru.skypro.homework.dto.Role.USER;
 @Tag(name = "Пользователи")
 @RequiredArgsConstructor
 public class UsersController {
+    public UserService userService;
 
     /**
      * Устанавливает новый пароль для пользователя.
@@ -32,8 +34,17 @@ public class UsersController {
      * @return успешное изменение пароля.
      */
     @PostMapping("/set_password")
-    public NewPassword setPassword(@RequestBody NewPassword newPassword) {
-        return new NewPassword();
+    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
+        boolean isUpdated = userService.updatePassword(
+                newPassword.getCurrentPassword(),
+                newPassword.getNewPassword()
+        );
+
+        if (isUpdated) {
+            return ResponseEntity.ok(newPassword);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(newPassword);
+        }
     }
 
     /**
@@ -42,9 +53,9 @@ public class UsersController {
      * @return объект User, содержащим информацию о пользователе.
      */
     @GetMapping("/users/me")
-    public User getUserInfo() {
-        User user = new User();
-        return user;
+    public ResponseEntity<User> getUserInfo() {
+        User user = userService.getCurrentUser();
+        return ResponseEntity.ok(user);
     }
 
     /**
@@ -53,9 +64,10 @@ public class UsersController {
      * @param updateUser объект, содержащий обновленные данные пользователя.
      * @return успешное обновление.
      */
-    @PatchMapping("/users/me")
-    public UpdateUser updateUserInfo(@RequestBody UpdateUser updateUser) {
-        return new UpdateUser();
+    @PatchMapping("/me")
+    public ResponseEntity<UpdateUser> updateUserInfo(@RequestBody UpdateUser updateUser) {
+        UpdateUser updatedUser = userService.updateUserInfo(updateUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**

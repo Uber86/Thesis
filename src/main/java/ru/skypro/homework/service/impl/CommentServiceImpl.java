@@ -1,4 +1,88 @@
 package ru.skypro.homework.service.impl;
 
-public class CommentServiceImpl {
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.Comment;
+import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.mapper.CommentMapper;
+import ru.skypro.homework.model.AdModel;
+import ru.skypro.homework.model.CommentModel;
+import ru.skypro.homework.model.UserModel;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.CommentService;
+
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@RequiredArgsConstructor
+@Service
+public class CommentServiceImpl implements CommentService {
+
+    private final CommentRepository repository;
+
+    private final CommentMapper mapper;
+
+    private final AdRepository adRepository;
+
+    private final UserRepository userRepository;
+
+    @Override
+    public Comments getAllCommentsByAdId(int idAd) {
+        List<CommentModel> comment = repository.findAll().stream()
+                .filter(id->id.getAd().equals((long)idAd))
+                .collect(Collectors.toList());
+        List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
+        Comments comments = new Comments();
+        comments.setCount(toCommentDtoList.size());
+        comments.setComments(toCommentDtoList);
+        return comments;
+    }
+
+    @Override
+    public Comment createNewComment(int idAd, CreateOrUpdateComment createComment){
+        AdModel adModel = adRepository.findById((long)idAd)
+                .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
+        UserModel author = userRepository.findAll().stream().findFirst()
+                .orElseThrow(()-> new EntityNotFoundException("User not found"));
+        CommentModel commentModel = mapper.toCommentModel(createComment);
+        commentModel.setCreateAt(LocalDateTime.now());
+        commentModel.setAd(adModel);
+        commentModel.setAuthor(author);
+        CommentModel savedComment = repository.save(commentModel);
+        return mapper.toCommentDto(savedComment);
+
+    }
+
+    @Override
+    public void deleteComment(int idAd, int commentId) {
+        AdModel adModel = adRepository.findById((long) idAd)
+                .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
+        CommentModel commentModel = repository.findById((long) commentId)
+                .orElseThrow(()-> new EntityNotFoundException("Comment not found"));
+        if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
+            throw new IllegalArgumentException();
+        }
+        repository.delete(commentModel);
+    }
+
+    @Override
+    public Comment updateCommentAd(int idAd, int idComment, CreateOrUpdateComment updateComment) {
+        AdModel ad = adRepository.findById((long) idAd)
+                .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
+        CommentModel comment = repository.findById((long)idComment)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+        if (!comment.getAd().getPk().equals(ad.getPk())) {
+            throw new IllegalArgumentException();
+        }
+        comment.setText(updateComment.getText());
+        CommentModel save = repository.save(comment);
+        return mapper.toCommentDto(save);
+    }
 }

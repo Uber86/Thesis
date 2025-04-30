@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 
 public interface AdService {
+
     Ads getAllAds();
 
     Ad addAd(CreateOrUpdateAd properties, MultipartFile image);
@@ -20,4 +21,6 @@ public interface AdService {
     Ads getAdsByUserId(int userId);
 
     byte[] updateImage(long id, MultipartFile image);
+
+    Ad findById(long id);
 }

@@ -51,4 +51,8 @@ public interface CommentMapper {
     @Mapping(target = "createAt",ignore = true)
     CommentModel toCommentModel(CreateOrUpdateComment createOrUpdateComment);
 
+    CreateOrUpdateComment toCreateOrUpdateComment(CommentModel commentModel);
+
+
+
 }

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentRepository repository;
+    private final CommentRepository commentRepository;
 
     private final CommentMapper mapper;
 
@@ -35,7 +35,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comments getAllCommentsByAdId(int idAd) {
-        List<CommentModel> comment = repository.findAll().stream()
+        List<CommentModel> comment = commentRepository.findAll().stream()
                 .filter(id->id.getAd().equals((long)idAd))
                 .collect(Collectors.toList());
         List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
@@ -55,34 +55,34 @@ public class CommentServiceImpl implements CommentService {
         commentModel.setCreateAt(LocalDateTime.now());
         commentModel.setAd(adModel);
         commentModel.setAuthor(author);
-        CommentModel savedComment = repository.save(commentModel);
+        CommentModel savedComment = commentRepository.save(commentModel);
         return mapper.toCommentDto(savedComment);
 
     }
 
     @Override
     public void deleteComment(int idAd, int commentId) {
-        AdModel adModel = adRepository.findById((long) idAd)
+        AdModel adModel = adRepository.findById((long)idAd)
                 .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
-        CommentModel commentModel = repository.findById((long) commentId)
+        CommentModel commentModel = commentRepository.findById((long) commentId)
                 .orElseThrow(()-> new EntityNotFoundException("Comment not found"));
         if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
             throw new IllegalArgumentException();
         }
-        repository.delete(commentModel);
+        commentRepository.delete(commentModel);
     }
 
     @Override
     public Comment updateCommentAd(int idAd, int idComment, CreateOrUpdateComment updateComment) {
-        AdModel ad = adRepository.findById((long) idAd)
+        AdModel ad = adRepository.findById((long)idAd)
                 .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
-        CommentModel comment = repository.findById((long)idComment)
+        CommentModel comment = commentRepository.findById((long)idComment)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
         if (!comment.getAd().getPk().equals(ad.getPk())) {
             throw new IllegalArgumentException();
         }
         comment.setText(updateComment.getText());
-        CommentModel save = repository.save(comment);
+        CommentModel save = commentRepository.save(comment);
         return mapper.toCommentDto(save);
     }
 }

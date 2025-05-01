@@ -9,8 +9,8 @@ import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.UserRepository;
 
 @Service
-public class UsersDetailsService implements UserDetailsService {
-
+public class UsersDetailsService  {
+    /*
     @Autowired
     private UserRepository userRepository;
 
@@ -22,5 +22,7 @@ public class UsersDetailsService implements UserDetailsService {
         }
         return new MyUserPrincipal(user);
     }
+
+     */
 
 }

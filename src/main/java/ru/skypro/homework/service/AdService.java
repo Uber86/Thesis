@@ -22,5 +22,4 @@ public interface AdService {
 
     byte[] updateImage(long id, MultipartFile image);
 
-    Ad findById(long id);
 }

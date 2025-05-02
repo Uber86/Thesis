@@ -7,4 +7,6 @@ public interface UserService {
     boolean updatePassword(String currentPassword, String newPassword);
     User getCurrentUser();
     UpdateUser updateUserInfo(UpdateUser updateUser);
+
+
 }

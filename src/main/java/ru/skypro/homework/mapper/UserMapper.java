@@ -74,4 +74,10 @@ public interface UserMapper {
     @Mapping(target = "phone", source = "phone")
     UpdateUser toUpdateUserDto(UserModel userModel);
 
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "role", source = "role")
+    UserModel toUserModel(Register register);
+
+    Register toRegisterDto(UserModel userModel);
+
 }

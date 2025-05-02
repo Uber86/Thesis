@@ -71,7 +71,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public Ads getAdsByUserId(int userId) {
-        List<AdModel> ads = adRepository.findByAdId(userId);
+        List<AdModel> ads = adRepository.findByPk(userId);
         List<Ad> adDtos = adMapper.toDtoList(ads);
 
         Ads adsResponse = new Ads();
@@ -83,7 +83,9 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public byte[] updateImage(long id, MultipartFile image) {
-        AdModel existing = (AdModel) adRepository.findByAdId(id);
+        AdModel existing = adRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
+
         try {
             existing.setImage(Arrays.toString(image.getBytes()));
         } catch (IOException e) {

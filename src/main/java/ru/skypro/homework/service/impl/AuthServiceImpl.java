@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
             return false;
         }
         UserModel user = mapper.toUserModel(register);
-
+        user.setEmail(register.getUsername());
         user.setPassword(encoder.encode(register.getPassword()));
         repository.save(user);
         return true;

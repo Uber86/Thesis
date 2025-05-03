@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
@@ -93,9 +95,9 @@ public class AdController {
      * @return Объект Ads, содержащим объявления текущего пользователя.
      */
     @GetMapping("/ads/me")
-    public Ads getAdsMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        int userId = Integer.parseInt(userPrincipal.getName());
-        return adService.getAdsByUserId(userId);
+    public Ads getAdsMe(Authentication authentication) {
+        String userId = ((User) authentication.getPrincipal()).getUsername();
+        return adService.getAdsByUserName(userId);
     }
 
     /**

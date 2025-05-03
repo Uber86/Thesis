@@ -2,10 +2,10 @@
 
 -- changeset oss:1
 CREATE TABLE users (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     email varchar(50) UNIQUE NOT NULL,
-    username varchar(16) NOT NULL,
-    password varchar(16) NOT NULL,
+    username varchar(128) NOT NULL,
+    password varchar(128) NOT NULL,
     first_name varchar(16) NOT NULL,
     last_name varchar(16) NOT NULL,
     phone varchar(12) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE users (
 
 -- changeset oss:2
 CREATE TABLE ads(
-    pk BIGINT PRIMARY KEY,
+    pk BIGSERIAL PRIMARY KEY,
     title varchar (255) ,
     price INT NOT NULL,
     description TEXT NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE ads(
 
 -- changeset oss:3
 CREATE TABLE comments (
-    pk BIGINT PRIMARY KEY,
+    pk BIGSERIAL PRIMARY KEY,
     ad_id BIGINT REFERENCES ads(pk),
     user_id BIGINT REFERENCES users(id),
     create_at TIMESTAMP,

@@ -6,6 +6,7 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.model.AdModel;
+import ru.skypro.homework.model.UserModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,7 @@ public interface AdRepository extends JpaRepository<AdModel, Long> {
 
     Optional<Ads> findByUser(User user);
 
-    List<Ad> findAllByUser(User user);
+    List<Ad> findAllByUser(UserModel author);
+
+    List<AdModel> findAllByAuthor(UserModel user);
 }

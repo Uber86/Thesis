@@ -7,15 +7,16 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.AdModel;
+import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -100,12 +101,15 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public Ads getAdsByUserName(String username) {
-        // Получаем пользователя по имени (email или username)
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        List<Ad> adList = adRepository.findAllByUser(user);
+        UserModel user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
 
+        List<AdModel> adModels = adRepository.findAllByAuthor(user);
+
+        List<Ad> adList = adMapper.toDtoList(adModels);
+
+        // Создаем объект Ads и заполняем его данными
         Ads ads = new Ads();
         ads.setCount(adList.size());
         ads.setResults(adList);

@@ -2,7 +2,6 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-import java.util.List;
 
 /**
  * Класс, представляющий пользователя в системе (User).

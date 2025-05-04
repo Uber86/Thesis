@@ -9,7 +9,6 @@ import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.service.CommentService;
-import ru.skypro.homework.service.UserService;
 
 /**
  * Контроллер для управления комментариями к объявлениям.

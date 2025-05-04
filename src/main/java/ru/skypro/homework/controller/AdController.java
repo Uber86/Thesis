@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -69,6 +70,7 @@ public class AdController {
      * @param id идентификатор объявления, которое нужно удалить.
      */
     @DeleteMapping("/ads/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteAd(@PathVariable int id) {
         adService.deleteAd(id);
 
@@ -82,6 +84,7 @@ public class AdController {
      * @return Обновленный объект Ad.
      */
     @PatchMapping("/ads/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ad updateAd(
             @PathVariable("id") int id,
             @RequestBody CreateOrUpdateAd createOrUpdateAd) {

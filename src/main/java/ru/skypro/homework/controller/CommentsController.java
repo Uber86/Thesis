@@ -3,6 +3,7 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
@@ -56,6 +57,7 @@ public class CommentsController {
      * @param commentId идентификатор удаляемого комментария.
      */
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public  ResponseEntity<Comment>  deleteCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId) {
         service.deleteComment(adId, commentId);
@@ -71,6 +73,7 @@ public class CommentsController {
      * @return обновленное комментарии.
      */
     @PatchMapping("/ads/{adId}/comments/{commentId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Comment> updateCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId,
                                                    @RequestBody CreateOrUpdateComment

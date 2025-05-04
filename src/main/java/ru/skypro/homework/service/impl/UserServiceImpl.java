@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.exception.UserNotFoundException;
@@ -9,6 +10,8 @@ import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -60,4 +63,23 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUpdateUserDto(savedUser);
     }
 
+    @Override
+    public byte[] updateUserImage(String username, MultipartFile imageFile) throws IOException {
+        UserModel userModel = userRepository.findByUsername(username);
+        byte[] imageBytes = imageFile.getBytes();
+
+        userModel.setImage(Arrays.toString(imageBytes));
+        userRepository.save(userModel);
+
+        return imageBytes;
+    }
+
+    @Override
+    public UserModel getCurrentUserModel(String username) {
+        return getUserModelByUsername(username);
+    }
+
+    private UserModel getUserModelByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

@@ -1,17 +1,17 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Ad;
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.Optional;
 public class AdServiceImpl implements AdService {
 
     private final AdRepository adRepository;
+    private final UserRepository userRepository;
     private final AdMapper adMapper;
 
     @Override
@@ -95,6 +96,21 @@ public class AdServiceImpl implements AdService {
         adRepository.save(existing);
 
         return existing.getImage().getBytes();
+    }
+
+    @Override
+    public Ads getAdsByUserName(String username) {
+        // Получаем пользователя по имени (email или username)
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        List<Ad> adList = adRepository.findAllByUser(user);
+
+        Ads ads = new Ads();
+        ads.setCount(adList.size());
+        ads.setResults(adList);
+
+        return ads;
     }
 
 }

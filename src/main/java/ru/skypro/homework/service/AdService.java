@@ -23,5 +23,5 @@ public interface AdService {
     byte[] updateImage(long id, MultipartFile image);
 
 
-
+    Ads getAdsByUserName(String username);
 }

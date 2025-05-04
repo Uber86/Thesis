@@ -91,13 +91,13 @@ public class AdController {
     /**
      * Получает объявления текущего пользователя.
      *
-     * @param userPrincipal объект пользователя, который аутентифицирован в системе.
+     * @param authentication объект пользователя, который аутентифицирован в системе.
      * @return Объект Ads, содержащим объявления текущего пользователя.
      */
     @GetMapping("/ads/me")
     public Ads getAdsMe(Authentication authentication) {
-        String userId = ((User) authentication.getPrincipal()).getUsername();
-        return adService.getAdsByUserName(userId);
+        String username = ((User) authentication.getPrincipal()).getUsername();
+        return adService.getAdsByUserName(username);
     }
 
     /**

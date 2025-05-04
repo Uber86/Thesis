@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.service.CommentService;
+import ru.skypro.homework.service.UserService;
 
 /**
  * Контроллер для управления комментариями к объявлениям.
@@ -18,6 +20,8 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 @RequiredArgsConstructor
 public class CommentsController {
 
+    public CommentService service;
+
     /**
      * Получает все комментарии для указанного объявления.
      *
@@ -25,8 +29,9 @@ public class CommentsController {
      * @return список комментариев.
      */
     @GetMapping("/ads/{id}/comments")
-    public Comments getCommendsAd(@PathVariable int id) {
-        return new Comments();
+    public ResponseEntity<Comments> getCommendsAd(@PathVariable int id) {
+        Comments comments = service.getAllCommentsByAdId(id);
+        return ResponseEntity.ok(comments);
     }
 
     /**
@@ -37,10 +42,11 @@ public class CommentsController {
      * @return добавлены комментарии.
      */
     @PostMapping("/ads/{id}/comments")
-    public Comment addCommentAd(@PathVariable("id") int id,
+    public ResponseEntity<Comment> addCommentAd(@PathVariable("id") int id,
                                                 @RequestBody CreateOrUpdateComment
                                                         createOrUpdateComment) {
-        return new Comment();
+        Comment comment = service.createNewComment(id, createOrUpdateComment);
+        return ResponseEntity.ok(comment);
     }
 
     /**
@@ -50,8 +56,10 @@ public class CommentsController {
      * @param commentId идентификатор удаляемого комментария.
      */
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
-    public  void  deleteCommentAd(@PathVariable("adId") int adId,
+    public  ResponseEntity<Comment>  deleteCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId) {
+        service.deleteComment(adId, commentId);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -63,10 +71,11 @@ public class CommentsController {
      * @return обновленное комментарии.
      */
     @PatchMapping("/ads/{adId}/comments/{commentId}")
-    public Comment updateCommentAd(@PathVariable("adId") int adId,
+    public ResponseEntity<Comment> updateCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId,
                                                    @RequestBody CreateOrUpdateComment
                                                               createOrUpdateComment) {
-        return new Comment();
+        Comment comment = service.updateCommentAd(adId, commentId, createOrUpdateComment);
+        return ResponseEntity.ok(comment);
     }
 }

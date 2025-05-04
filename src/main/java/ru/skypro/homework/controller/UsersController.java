@@ -25,6 +25,7 @@ import static ru.skypro.homework.dto.Role.USER;
 @Tag(name = "Пользователи")
 @RequiredArgsConstructor
 public class UsersController {
+
     public UserService userService;
 
     /**
@@ -39,7 +40,6 @@ public class UsersController {
                 newPassword.getCurrentPassword(),
                 newPassword.getNewPassword()
         );
-
         if (isUpdated) {
             return ResponseEntity.ok(newPassword);
         } else {

@@ -50,7 +50,7 @@ public class AdServiceImpl implements AdService {
         if (optionalAd.isPresent()) {
             return adMapper.toDto(optionalAd.get());
         } else {
-            throw new RuntimeException("Объявление с ID " + id + " не найдено");
+            throw new RuntimeException("Ad with ID " + id + " not found");
         }
     }
 
@@ -63,7 +63,7 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ad updateAd(long id, CreateOrUpdateAd createOrUpdateAd) {
         AdModel existing = adRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
+                .orElseThrow(() -> new RuntimeException("Ad not found"));
 
         existing.setTitle(createOrUpdateAd.getTitle());
         existing.setDescription(createOrUpdateAd.getDescription());
@@ -86,12 +86,12 @@ public class AdServiceImpl implements AdService {
     @Override
     public byte[] updateImage(long id, MultipartFile image) {
         AdModel existing = adRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
+                .orElseThrow(() -> new RuntimeException("Ad not found"));
 
         try {
             existing.setImage(Arrays.toString(image.getBytes()));
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка при получении изображения", e);
+            throw new RuntimeException("Error while receiving image", e);
         }
 
         adRepository.save(existing);
@@ -103,7 +103,7 @@ public class AdServiceImpl implements AdService {
     public Ads getAdsByUserName(String username) {
 
         UserModel user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         List<AdModel> adModels = adRepository.findAllByAuthor(user);
 

@@ -11,4 +11,6 @@ import java.util.List;
 public interface AdRepository extends JpaRepository<AdModel, Long> {
 
     List<AdModel> findAllByAuthor(UserModel user);
+
+    List<AdModel> findByPk(int userId);
 }

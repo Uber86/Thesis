@@ -1,10 +1,14 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.model.CommentModel;
@@ -12,6 +16,7 @@ import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.security.UsersDetailsService;
 import ru.skypro.homework.service.CommentService;
 
 import javax.persistence.EntityNotFoundException;
@@ -31,6 +36,22 @@ public class CommentServiceImpl implements CommentService {
 
     private final UserRepository userRepository;
 
+    private final UsersDetailsService usersDetailsService;
+
+    private String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null && !authentication.isAuthenticated()) {
+            throw new RuntimeException("User is not authenticated");
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else{
+            return principal.toString();
+        }
+    }
+
+
     @Override
     public Comments getAllCommentsByAdId(int idAd) {
         List<CommentModel> comment = commentRepository.findAll().stream()
@@ -47,8 +68,11 @@ public class CommentServiceImpl implements CommentService {
     public Comment createNewComment(int idAd, CreateOrUpdateComment createComment){
         AdModel adModel = adRepository.findById((long)idAd)
                 .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
-        UserModel author = userRepository.findAll().stream().findFirst()
-                .orElseThrow(()-> new EntityNotFoundException("User not found"));
+        String username = getCurrentUsername();
+        UserModel author = userRepository.findByUsername(username);
+        if (author == null) {
+            throw new EntityNotFoundException("User not found");
+        }
         CommentModel commentModel = mapper.toCommentModel(createComment);
         commentModel.setCreateAt(LocalDateTime.now());
         commentModel.setAd(adModel);

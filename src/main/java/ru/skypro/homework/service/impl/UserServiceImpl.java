@@ -36,7 +36,11 @@ public class UserServiceImpl implements UserService {
     public boolean updatePassword(String currentPassword, String newPassword) {
         Long currentUserId = getCurrentUserId();
         UserModel userModel = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
+        if (!userModel.getPassword().equals(currentPassword)) {
+            throw new IllegalArgumentException(
+                    "Неверный текущий пароль для пользователя " + userModel.getUsername());
+        }
         userMapper.updatePasswordFromDto(newPassword, userModel);
         userModel.setPassword(newPassword);
         userRepository.save(userModel);
@@ -44,16 +48,16 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getCurrentUser() {
-        Long currentUserId = getCurrentUserId(); // Получаем ID текущего пользователя
+        Long currentUserId = getCurrentUserId();
         return userRepository.findById(currentUserId)
                 .map(userMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
     }
 
     public UpdateUser updateUserInfo(UpdateUser updateUser) {
         Long currentUserId = getCurrentUserId();
         UserModel user = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
 
         if (updateUser.getFirstName() != null) {
             user.setFirstName(updateUser.getFirstName());
@@ -81,13 +85,12 @@ public class UserServiceImpl implements UserService {
         return imageBytes;
     }
 
-    @Override
-    public UserModel getCurrentUserModel(String username) {
-        return getUserModelByUsername(username);
-    }
-
     private UserModel getUserModelByUsername(String username) {
-        return userRepository.findByUsername(username);
+        UserModel user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException("User '" + username + "' not founded");
+        }
+        return user;
     }
 
     private Long getCurrentUserId() {

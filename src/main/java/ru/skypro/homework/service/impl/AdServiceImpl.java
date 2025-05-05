@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.exception.ImageProcessingException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.model.UserModel;
@@ -12,6 +14,7 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -45,17 +48,17 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public ExtendedAd getAd(long id) {
-        Optional<AdModel> optionalAd = adRepository.findById(id);
+        AdModel ad = adRepository.findById(id)
+                .orElseThrow(() -> new AdNotFoundException(id));
 
-        if (optionalAd.isPresent()) {
-            return adMapper.toDto(optionalAd.get());
-        } else {
-            throw new RuntimeException("Ad with ID " + id + " not found");
-        }
+        return adMapper.toDto(ad);
     }
 
     @Override
     public void deleteAd(long id) {
+        if (!adRepository.existsById(id)) {
+            throw new EntityNotFoundException("Объявление с ID " + id + " не найдено.");
+        }
         adRepository.deleteById(id);
 
     }
@@ -63,7 +66,7 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ad updateAd(long id, CreateOrUpdateAd createOrUpdateAd) {
         AdModel existing = adRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ad not found"));
+                .orElseThrow(() -> new AdNotFoundException(id));
 
         existing.setTitle(createOrUpdateAd.getTitle());
         existing.setDescription(createOrUpdateAd.getDescription());
@@ -86,12 +89,12 @@ public class AdServiceImpl implements AdService {
     @Override
     public byte[] updateImage(long id, MultipartFile image) {
         AdModel existing = adRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ad not found"));
+                .orElseThrow(() -> new AdNotFoundException(id));
 
         try {
             existing.setImage(Arrays.toString(image.getBytes()));
         } catch (IOException e) {
-            throw new RuntimeException("Error while receiving image", e);
+            throw new ImageProcessingException("Error while receiving image", e);
         }
 
         adRepository.save(existing);

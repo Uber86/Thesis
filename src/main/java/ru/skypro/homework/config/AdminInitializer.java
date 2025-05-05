@@ -1,6 +1,7 @@
 package ru.skypro.homework.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Role;
@@ -22,13 +23,16 @@ public class AdminInitializer {
 
     private final PasswordEncoder encoder;
 
+    @Value("${admin.password}")
+    private String adminPassword; // Получаем пароль из проперти
+
     @PostConstruct
     public void initAdmin() {
         String user = "Admin";
         if (!repository.existsByUsername(user)) {
             UserModel admin = new UserModel();
             admin.setUsername(user);
-            admin.setPassword(encoder.encode("adminadmin"));
+            admin.setPassword(encoder.encode(adminPassword)); // Используем пароль из проперти
             admin.setRole(Role.ADMIN);
             admin.setEmail("admin@admin.com");
             admin.setFirstName("Admin");

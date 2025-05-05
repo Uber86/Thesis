@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentModel, Long> {
 
-    List<CommentModel> findAll();
 }

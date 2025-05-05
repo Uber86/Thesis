@@ -10,7 +10,5 @@ import java.util.List;
 @Repository
 public interface AdRepository extends JpaRepository<AdModel, Long> {
 
-    List<AdModel> findByPk(long idpk);
-
     List<AdModel> findAllByAuthor(UserModel user);
 }

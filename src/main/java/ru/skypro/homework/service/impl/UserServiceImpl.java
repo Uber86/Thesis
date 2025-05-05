@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.UpdateUser;
@@ -8,6 +10,7 @@ import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.security.UsersDetailsService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -18,17 +21,20 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UsersDetailsService usersDetailsService;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, UsersDetailsService usersDetailsService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.usersDetailsService = usersDetailsService;
     }
 
     /**
      * Обновление пароля пользователя
      */
     public boolean updatePassword(String currentPassword, String newPassword) {
-        UserModel userModel = userRepository.findById(1L)
+        Long currentUserId = getCurrentUserId();
+        UserModel userModel = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         userMapper.updatePasswordFromDto(newPassword, userModel);
         userModel.setPassword(newPassword);
@@ -37,14 +43,14 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getCurrentUser() {
-        Long currentUserId = 1L; // временная заглушка
+        Long currentUserId = getCurrentUserId(); // Получаем ID текущего пользователя
         return userRepository.findById(currentUserId)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     public UpdateUser updateUserInfo(UpdateUser updateUser) {
-        Long currentUserId = 1L; // временная заглушка
+        Long currentUserId = getCurrentUserId();
         UserModel user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -81,5 +87,17 @@ public class UserServiceImpl implements UserService {
 
     private UserModel getUserModelByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    private Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            UserModel user = (UserModel) usersDetailsService.loadUserByUsername(username);
+            return user.getId();
+        }
+
+        throw new UserNotFoundException("No authenticated user found");
     }
 }

@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.UpdateUser;
@@ -94,7 +95,11 @@ public class UserServiceImpl implements UserService {
 
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            UserModel user = (UserModel) usersDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = usersDetailsService.loadUserByUsername(username);
+            UserModel user = userRepository.findByUsername(userDetails.getUsername());
+            if (user == null){
+                throw new UserNotFoundException("User not found");
+            }
             return user.getId();
         }
 

@@ -20,7 +20,7 @@ import ru.skypro.homework.service.CommentService;
 @RequiredArgsConstructor
 public class CommentsController {
 
-    public CommentService service;
+    public final CommentService service;
 
     /**
      * Получает все комментарии для указанного объявления.

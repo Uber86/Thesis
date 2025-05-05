@@ -26,7 +26,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UsersController {
 
-    public UserService userService;
+    public final UserService userService;
 
     /**
      * Устанавливает новый пароль для пользователя.

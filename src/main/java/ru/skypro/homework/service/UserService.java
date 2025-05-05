@@ -12,6 +12,5 @@ public interface UserService {
     User getCurrentUser();
     UpdateUser updateUserInfo(UpdateUser updateUser);
     byte[] updateUserImage(String username, MultipartFile imageFile) throws IOException;
-    UserModel getCurrentUserModel(String username);
 
 }

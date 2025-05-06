@@ -1,10 +1,12 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
@@ -40,71 +42,75 @@ public class CommentServiceImpl implements CommentService {
 
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null && !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User is not authenticated");
         }
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        } else{
-            return principal.toString();
-        }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return userDetails.getUsername();
     }
 
 
     @Override
     public Comments getAllCommentsByAdId(int idAd) {
-        List<CommentModel> comment = commentRepository.findAll().stream()
-                .filter(id->id.getAd().equals((long)idAd))
-                .collect(Collectors.toList());
+        List<CommentModel> comment = commentRepository.findByAd((long) idAd);
+
         List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
+
         Comments comments = new Comments();
         comments.setCount(toCommentDtoList.size());
         comments.setComments(toCommentDtoList);
+
         return comments;
     }
 
     @Override
-    public Comment createNewComment(int idAd, CreateOrUpdateComment createComment){
-        AdModel adModel = adRepository.findById((long)idAd)
-                .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
+    public Comment createNewComment(int idAd, CreateOrUpdateComment createComment) {
+        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
+
         String username = getCurrentUsername();
         UserModel author = userRepository.findByUsername(username);
         if (author == null) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("User entity not found");
         }
+
         CommentModel commentModel = mapper.toCommentModel(createComment);
         commentModel.setCreateAt(LocalDateTime.now());
         commentModel.setAd(adModel);
         commentModel.setAuthor(author);
+
         CommentModel savedComment = commentRepository.save(commentModel);
         return mapper.toCommentDto(savedComment);
-
     }
+
+    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
+    }
+
 
     @Override
     public void deleteComment(int idAd, int commentId) {
-        AdModel adModel = adRepository.findById((long)idAd)
-                .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
-        CommentModel commentModel = commentRepository.findById((long) commentId)
-                .orElseThrow(()-> new EntityNotFoundException("Comment not found"));
+        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
+        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);
+
         if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Комментарий не относится к указанному объявлению");
         }
+
         commentRepository.delete(commentModel);
     }
 
     @Override
     public Comment updateCommentAd(int idAd, int idComment, CreateOrUpdateComment updateComment) {
-        AdModel ad = adRepository.findById((long)idAd)
-                .orElseThrow(()-> new EntityNotFoundException("Ad not found"));
-        CommentModel comment = commentRepository.findById((long)idComment)
-                .orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+        AdModel ad = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
+        CommentModel comment = findEntityByIdOrThrow(commentRepository, (long) idComment, Comment.class);
+
         if (!comment.getAd().getPk().equals(ad.getPk())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("CКомментарий не относится к указанному объявлению");
         }
+
         comment.setText(updateComment.getText());
-        CommentModel save = commentRepository.save(comment);
-        return mapper.toCommentDto(save);
+        CommentModel savedComment = commentRepository.save(comment);
+        return mapper.toCommentDto(savedComment);
     }
 }

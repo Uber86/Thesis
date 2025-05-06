@@ -10,7 +10,7 @@ CREATE TABLE users (
     last_name varchar(16) NOT NULL,
     phone varchar(12) NOT NULL,
     role varchar(32) NOT NULL,
-    image varchar(255)
+    image text
 );
 
 -- changeset oss:2
@@ -20,7 +20,7 @@ CREATE TABLE ads(
     price INT NOT NULL,
     description TEXT NOT NULL,
     user_id BIGINT REFERENCES users(id),
-    image varchar(255)
+    image text
 );
 
 -- changeset oss:3

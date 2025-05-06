@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comments getAllCommentsByAdId(int idAd) {
-        List<CommentModel> comment = commentRepository.findByAd((long) idAd);
+        List<CommentModel> comment = commentRepository.findByAd(idAd);
 
         List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
 

@@ -12,11 +12,11 @@ public interface AdService {
 
     Ad addAd(CreateOrUpdateAd properties, MultipartFile image);
 
-    ExtendedAd getAd(long id);
+    ExtendedAd getAd(int id);
 
-    void deleteAd(long id);
+    void deleteAd(int id);
 
-    Ad updateAd(long id, CreateOrUpdateAd createOrUpdateAd);
+    Ad updateAd(int id, CreateOrUpdateAd createOrUpdateAd);
 
     Ads getAdsByUserId(int userId);
 

@@ -47,24 +47,24 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ExtendedAd getAd(long id) {
-        AdModel ad = adRepository.findById(id)
+    public ExtendedAd getAd(int id) {
+        AdModel ad = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
         return adMapper.toDto(ad);
     }
 
     @Override
-    public void deleteAd(long id) {
-        if (!adRepository.existsById(id)) {
+    public void deleteAd(int id) {
+        if (!adRepository.existsById((long) id)) {
             throw new EntityNotFoundException("Объявление с ID " + id + " не найдено.");
         }
-        adRepository.deleteById(id);
+        adRepository.deleteById((long) id);
     }
 
     @Override
-    public Ad updateAd(long id, CreateOrUpdateAd createOrUpdateAd) {
-        AdModel existing = adRepository.findById(id)
+    public Ad updateAd(int id, CreateOrUpdateAd createOrUpdateAd) {
+        AdModel existing = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
         existing.setTitle(createOrUpdateAd.getTitle());
@@ -87,7 +87,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public byte[] updateImage(long id, MultipartFile image) {
-        AdModel existing = adRepository.findById(id)
+        AdModel existing = adRepository.findById( id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
         try {

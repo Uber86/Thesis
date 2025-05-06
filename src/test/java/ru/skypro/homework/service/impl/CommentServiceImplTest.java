@@ -48,13 +48,13 @@ class CommentServiceImplTest {
         MockitoAnnotations.openMocks(this);
 
         adModel = new AdModel();
-        adModel.setPk(1L);
+        adModel.setPk(1);
 
         userModel = new UserModel();
         userModel.setUsername("user");
 
         commentModel = new CommentModel();
-        commentModel.setPk(1L);
+        commentModel.setPk(1);
         commentModel.setAd(adModel);
         commentModel.setAuthor(userModel);
         commentModel.setCreateAt(LocalDateTime.now());
@@ -70,7 +70,7 @@ class CommentServiceImplTest {
 
     @Test
     void createNewCommentSuccess() {
-        when(adRepository.findById(1L)).thenReturn(Optional.of(adModel));
+        when(adRepository.findById(1)).thenReturn(Optional.of(adModel));
         when(userRepository.findAll()).thenReturn(List.of(userModel));
         when(commentMapper.toCommentModel(createOrUpdateComment)).thenReturn(commentModel);
         when(commentRepository.save(commentModel)).thenReturn(commentModel);
@@ -80,7 +80,7 @@ class CommentServiceImplTest {
 
         assertNotNull(result);
         assertEquals("text", result.getText());
-        verify(adRepository).findById(1L);
+        verify(adRepository).findById(1);
         verify(userRepository).findAll();
         verify(commentMapper).toCommentModel(createOrUpdateComment);
         verify(commentRepository).save(commentModel);

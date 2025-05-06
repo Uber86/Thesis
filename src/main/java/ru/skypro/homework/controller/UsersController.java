@@ -79,7 +79,7 @@ public class UsersController {
     @PatchMapping("/users/me/image")
     public ResponseEntity<byte[]> updateUserImage(
             @Parameter(description = "Файл изображения для обновления", required = true)
-            @RequestParam("image") MultipartFile imageFile,
+            @RequestPart("image") MultipartFile imageFile,
             Authentication authentication) throws IOException {
 
         String username = authentication.getName();

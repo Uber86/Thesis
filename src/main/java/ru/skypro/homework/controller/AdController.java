@@ -45,8 +45,8 @@ public class AdController {
      * @return объект ad
      */
     @PostMapping("/ads")
-    public Ad addAd(@RequestParam("properties") CreateOrUpdateAd properties,
-                    @RequestParam("image") MultipartFile image) {
+    public Ad addAd(@RequestPart("properties") CreateOrUpdateAd properties,
+                    @RequestPart("image") MultipartFile image) {
         return adService.addAd(properties, image);
     }
 
@@ -109,8 +109,8 @@ public class AdController {
      */
     @PatchMapping("/ads/{id}/image")
     public ResponseEntity<byte[]> updateImage(
-            @PathVariable("id") int id,
-            @RequestParam("image") MultipartFile image) {
+            @RequestPart("id") int id,
+            @RequestPart("image") MultipartFile image) {
         byte[] updatedImage = adService.updateImage(id, image);
         String contentType = image.getContentType();
         return ResponseEntity.ok()

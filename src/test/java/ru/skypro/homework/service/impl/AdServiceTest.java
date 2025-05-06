@@ -20,10 +20,10 @@ public class AdServiceTest {
     @Test
     void testToDto() {
         UserModel user = new UserModel();
-        user.setId(123L);
+        user.setId(123);
 
         AdModel adModel = new AdModel();
-        adModel.setPk(1L);
+        adModel.setPk(1);
         adModel.setAuthor(user);
         adModel.setImage("/path/to/image.jpg");
         adModel.setPrice(1000);

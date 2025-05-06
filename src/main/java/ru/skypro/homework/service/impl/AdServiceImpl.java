@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,27 +45,45 @@ public class AdServiceImpl implements AdService {
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
         AdModel adModel = adMapper.toModel(properties);
         return adMapper.toDto(adRepository.save(adModel));
+
+//        if (image == null || image.isEmpty()) {
+//            throw new IllegalArgumentException("Image file must not be null or empty");
+//        }
+//
+//        AdModel adModel = adMapper.toModel(properties);
+//
+//        // Преобразование изображения в Base64
+//        try {
+//            byte[] bytes = image.getBytes();
+//            String base64Image = Base64.encodeBase64String(bytes);
+//            adModel.setImage(base64Image); // Установка Base64 строки
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to convert image to Base64", e);
+//        }
+//
+//        return adMapper.toDto(adRepository.save(adModel));
     }
 
     @Override
-    public ExtendedAd getAd(long id) {
-        AdModel ad = adRepository.findById(id)
+    public ExtendedAd getAd(int id) {
+        AdModel ad = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
         return adMapper.toDto(ad);
     }
 
     @Override
-    public void deleteAd(long id) {
-        if (!adRepository.existsById(id)) {
+    public void deleteAd(int id) {
+        if (!adRepository.existsById((long) id)) {
             throw new EntityNotFoundException("Объявление с ID " + id + " не найдено.");
         }
-        adRepository.deleteById(id);
+        adRepository.deleteById((long) id);
     }
 
     @Override
-    public Ad updateAd(long id, CreateOrUpdateAd createOrUpdateAd) {
-        AdModel existing = adRepository.findById(id)
+    public Ad updateAd(int id, CreateOrUpdateAd createOrUpdateAd) {
+        AdModel existing = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
         existing.setTitle(createOrUpdateAd.getTitle());
@@ -87,7 +106,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public byte[] updateImage(long id, MultipartFile image) {
-        AdModel existing = adRepository.findById(id)
+        AdModel existing = adRepository.findById( id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
         try {

@@ -49,68 +49,94 @@ public class CommentServiceImpl implements CommentService {
         return userDetails.getUsername();
     }
 
+    private Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            UserDetails userDetails = usersDetailsService.loadUserByUsername(username);
+            UserModel user = userRepository.findByUsername(userDetails.getUsername());
+            if (user == null){
+                throw new UserNotFoundException("User not found");
+            }
+            return user.getId();
+        }
+        throw new UserNotFoundException("No authenticated user found");
+    }
+
 
     @Override
     public Comments getAllCommentsByAdId(int idAd) {
-        List<CommentModel> comment = commentRepository.findByAd(idAd);
-
-        List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
-
-        Comments comments = new Comments();
-        comments.setCount(toCommentDtoList.size());
-        comments.setComments(toCommentDtoList);
-
-        return comments;
+        List<CommentModel> comment = commentRepository.findByAd(getCurrentUserId());
+        if (getCurrentUserId() == idAd) {
+            List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
+            Comments comments = new Comments();
+            comments.setCount(toCommentDtoList.size());
+            comments.setComments(toCommentDtoList);
+            return comments;
+        }
+        throw new UserNotFoundException("No authenticated user found");
     }
+
 
     @Override
     public Comment createNewComment(int idAd, CreateOrUpdateComment createComment) {
-        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-
-        String username = getCurrentUsername();
-        UserModel author = userRepository.findByUsername(username);
-        if (author == null) {
-            throw new EntityNotFoundException("User entity not found");
+//        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
+        AdModel adModel = adRepository.findByPkAd(idAd);
+        if (adModel != null) {
+            UserModel author = userRepository.findByUsername(getCurrentUsername());
+            if (author == null) {
+                throw new EntityNotFoundException("User entity not found");
+            }
+            CommentModel commentModel = mapper.toCommentModel(createComment);
+            commentModel.setCreateAt(LocalDateTime.now());
+            commentModel.setAd(adModel);
+            commentModel.setAuthor(author);
+            CommentModel savedComment = commentRepository.save(commentModel);
+            return mapper.toCommentDto(savedComment);
         }
-
-        CommentModel commentModel = mapper.toCommentModel(createComment);
-        commentModel.setCreateAt(LocalDateTime.now());
-        commentModel.setAd(adModel);
-        commentModel.setAuthor(author);
-
-        CommentModel savedComment = commentRepository.save(commentModel);
-        return mapper.toCommentDto(savedComment);
+        throw new UserNotFoundException("No authenticated user found");
     }
 
-    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
-    }
+//    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
+//        return repository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
+//    }
 
 
     @Override
     public void deleteComment(int idAd, int commentId) {
-        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);
-
-        if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
-            throw new IllegalArgumentException("Комментарий не относится к указанному объявлению");
+//        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
+        AdModel adModel = adRepository.findByPkAd(idAd);
+        UserModel author = userRepository.findByUsername(getCurrentUsername());
+        CommentModel commentModel = commentRepository.
+                findById((long)commentId).
+                filter(it->it.equals(commentId)).orElseThrow();
+        if (adModel.getAuthor().equals(author) && commentModel.getAuthor().equals(author)) {
+            commentRepository.delete(commentModel);
         }
-
-        commentRepository.delete(commentModel);
+////        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);
+//        if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
+//            throw new IllegalArgumentException("Комментарий не относится к указанному объявлению");
+//        }
     }
 
     @Override
     public Comment updateCommentAd(int idAd, int idComment, CreateOrUpdateComment updateComment) {
-        AdModel ad = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-        CommentModel comment = findEntityByIdOrThrow(commentRepository, (long) idComment, Comment.class);
-
-        if (!comment.getAd().getPk().equals(ad.getPk())) {
-            throw new IllegalArgumentException("CКомментарий не относится к указанному объявлению");
+//        AdModel ad = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
+//        CommentModel comment = findEntityByIdOrThrow(commentRepository, (long) idComment, Comment.class);
+        AdModel adModel = (AdModel) commentRepository.findByAd(idAd);
+        CommentModel commentModel = commentRepository.
+                findById((long)idComment).
+                filter(it->it.equals(idComment)).orElseThrow();
+        UserModel author = userRepository.findByUsername(getCurrentUsername());
+        if (adModel.getAuthor().equals(author) && commentModel.getAuthor().equals(author)) {
+            CommentModel savedComment = commentRepository.save(mapper.toCommentModel(updateComment));
+            return mapper.toCommentDto(savedComment);
         }
 
-        comment.setText(updateComment.getText());
-        CommentModel savedComment = commentRepository.save(comment);
-        return mapper.toCommentDto(savedComment);
+//        if (!comment.getAd().getPk().equals(ad.getPk())) {
+//            throw new IllegalArgumentException("CКомментарий не относится к указанному объявлению");
+//        }
+        throw new UserNotFoundException("No authenticated user found");
     }
 }

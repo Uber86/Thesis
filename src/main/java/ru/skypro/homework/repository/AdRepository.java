@@ -13,4 +13,6 @@ public interface AdRepository extends JpaRepository<AdModel, Long> {
     List<AdModel> findAllByAuthor(UserModel user);
 
     List<AdModel> findByPk(int userId);
+
+    AdModel findByPkAd(int pk);
 }

@@ -45,12 +45,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
-        // Получаем текущего аутентифицированного пользователя
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName(); // Предполагается, что имя пользователя - это email
-
-        UserModel user = userRepository.findByEmail(currentUserEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserEmail));
+        UserModel user = getCurrentUser();
 
         AdModel adModel = adMapper.toModel(properties);
         adModel.setAuthor(user);
@@ -88,13 +83,7 @@ public class AdServiceImpl implements AdService {
         AdModel existing = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
-        // Проверка на соответствие пользователя
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-
-        if (!existing.getAuthor().getEmail().equals(currentUserEmail)) {
-            throw new SecurityException("You do not have permission to delete this ad.");
-        }
+        checkUserPermission(existing);
 
         adRepository.deleteById((long) id);
     }
@@ -104,13 +93,7 @@ public class AdServiceImpl implements AdService {
         AdModel existing = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
 
-        // Проверка на соответствие пользователя
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = authentication.getName();
-
-        if (!existing.getAuthor().getEmail().equals(currentUserEmail)) {
-            throw new SecurityException("You do not have permission to update this ad.");
-        }
+        checkUserPermission(existing);
 
         existing.setTitle(createOrUpdateAd.getTitle());
         existing.setDescription(createOrUpdateAd.getDescription());
@@ -162,6 +145,22 @@ public class AdServiceImpl implements AdService {
         ads.setResults(adList);
 
         return ads;
+    }
+
+    private UserModel getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName(); // Предполагается, что имя пользователя - это email
+
+        return userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserEmail));
+    }
+
+    private void checkUserPermission(AdModel ad) {
+        UserModel currentUser = getCurrentUser();
+
+        if (!ad.getAuthor().getEmail().equals(currentUser.getEmail())) {
+            throw new SecurityException("You do not have permission to modify this ad.");
+        }
     }
 
 }

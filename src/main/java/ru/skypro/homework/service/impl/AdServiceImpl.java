@@ -60,7 +60,6 @@ public class AdServiceImpl implements AdService {
             throw new EntityNotFoundException("Объявление с ID " + id + " не найдено.");
         }
         adRepository.deleteById(id);
-
     }
 
     @Override

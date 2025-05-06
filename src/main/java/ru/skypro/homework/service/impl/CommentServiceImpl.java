@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment createNewComment(int idAd, CreateOrUpdateComment createComment) {
 //        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-        AdModel adModel = adRepository.findByPkAd(idAd);
+        List<AdModel> adModel = adRepository.findByPk(idAd);
         if (adModel != null) {
             UserModel author = userRepository.findByUsername(getCurrentUsername());
             if (author == null) {
@@ -89,7 +89,7 @@ public class CommentServiceImpl implements CommentService {
             }
             CommentModel commentModel = mapper.toCommentModel(createComment);
             commentModel.setCreateAt(LocalDateTime.now());
-            commentModel.setAd(adModel);
+            commentModel.setAd((AdModel) adModel);
             commentModel.setAuthor(author);
             CommentModel savedComment = commentRepository.save(commentModel);
             return mapper.toCommentDto(savedComment);
@@ -106,12 +106,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(int idAd, int commentId) {
 //        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-        AdModel adModel = adRepository.findByPkAd(idAd);
+        List<AdModel> adModel = adRepository.findByPk(idAd);
         UserModel author = userRepository.findByUsername(getCurrentUsername());
         CommentModel commentModel = commentRepository.
                 findById((long)commentId).
                 filter(it->it.equals(commentId)).orElseThrow();
-        if (adModel.getAuthor().equals(author) && commentModel.getAuthor().equals(author)) {
+        if (commentModel.getAuthor().equals(author)) {
             commentRepository.delete(commentModel);
         }
 ////        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);

@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +43,22 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Image file must not be null or empty");
+        }
+
         AdModel adModel = adMapper.toModel(properties);
+
+        // Преобразование изображения в Base64
+        try {
+            byte[] bytes = image.getBytes();
+            String base64Image = Base64.encodeBase64String(bytes);
+            adModel.setImage(base64Image); // Установка Base64 строки
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to convert image to Base64", e);
+        }
+
         return adMapper.toDto(adRepository.save(adModel));
     }
 

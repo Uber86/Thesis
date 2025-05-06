@@ -2,6 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +45,15 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
+        // Получаем текущего аутентифицированного пользователя
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName(); // Предполагается, что имя пользователя - это email
+
+        UserModel user = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUserEmail));
+
         AdModel adModel = adMapper.toModel(properties);
+        adModel.setAuthor(user);
         return adMapper.toDto(adRepository.save(adModel));
 
 //        if (image == null || image.isEmpty()) {
@@ -75,9 +85,17 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public void deleteAd(int id) {
-        if (!adRepository.existsById((long) id)) {
-            throw new EntityNotFoundException("Объявление с ID " + id + " не найдено.");
+        AdModel existing = adRepository.findById((long) id)
+                .orElseThrow(() -> new AdNotFoundException(id));
+
+        // Проверка на соответствие пользователя
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+
+        if (!existing.getAuthor().getEmail().equals(currentUserEmail)) {
+            throw new SecurityException("You do not have permission to delete this ad.");
         }
+
         adRepository.deleteById((long) id);
     }
 
@@ -85,6 +103,14 @@ public class AdServiceImpl implements AdService {
     public Ad updateAd(int id, CreateOrUpdateAd createOrUpdateAd) {
         AdModel existing = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
+
+        // Проверка на соответствие пользователя
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+
+        if (!existing.getAuthor().getEmail().equals(currentUserEmail)) {
+            throw new SecurityException("You do not have permission to update this ad.");
+        }
 
         existing.setTitle(createOrUpdateAd.getTitle());
         existing.setDescription(createOrUpdateAd.getDescription());

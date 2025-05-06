@@ -25,8 +25,12 @@ public interface AdMapper {
      * @param adModel объект AdModel для преобразования
      * @return преобразованный DTO Ad
      */
-    @Mapping(target = "author", source = "author.id")
+    @Mapping(target = "author", source = "author.id") // Assuming author.id is an int
     @Mapping(target = "image", source = "image")
+    @Mapping(target = "pk", source = "pk") // Map primary key
+    @Mapping(target = "price", source = "price") // Map price
+    @Mapping(target = "title", source = "title") // Map title
+    @Mapping(target = "description", source = "description")
     Ad toDto(AdModel adModel);
 
     /**
@@ -35,8 +39,12 @@ public interface AdMapper {
      * @param ad DTO Ad для преобразования
      * @return преобразованный объект AdModel
      */
-    @Mapping(target = "author.id", source = "author")
+    @Mapping(target = "author.id", source = "author") // Assuming author is an int in DTO
     @Mapping(target = "image", source = "image")
+    @Mapping(target = "pk", source = "pk") // Map primary key
+    @Mapping(target = "price", source = "price") // Map price
+    @Mapping(target = "title", source = "title") // Map title
+    @Mapping(target = "description", source = "description")
     AdModel toModel(Ad ad);
 
     /**

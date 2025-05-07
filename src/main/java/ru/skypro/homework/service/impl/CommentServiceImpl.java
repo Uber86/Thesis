@@ -116,8 +116,11 @@ public class CommentServiceImpl implements CommentService {
         Optional<CommentModel> commentModelOptional = commentRepository.findById((long) commentId);
         CommentModel commentModel = commentModelOptional
                 .orElseThrow(()-> new CommentNotFoundException(commentId));
-        adModel.getComments().remove(commentModel);
-        commentRepository.delete(commentModel);
+        if (commentModel.getAuthor().getId().equals(userModel.getId())) {
+            adModel.getComments().remove(commentModel);
+            commentRepository.delete(commentModel);
+        }
+
 //        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
 //        List<AdModel> adModel = adRepository.findByPk(idAd);
 //        UserModel author = userRepository.findByUsername(getCurrentUsername());

@@ -38,7 +38,8 @@ public class Comment {
      * <code>(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)</code>.
      * </p>
      */
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+//    @Pattern(regexp = "(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createAt;
 
     /**

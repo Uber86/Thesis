@@ -1,13 +1,11 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
@@ -24,11 +22,10 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UsersDetailsService;
 import ru.skypro.homework.service.CommentService;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @Service
@@ -44,14 +41,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final UsersDetailsService usersDetailsService;
 
-    private String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User is not authenticated");
-        }
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userDetails.getUsername();
-    }
 
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -69,7 +58,6 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    @Transactional
     public Comments getAllCommentsByAdId(int idAd) {
         Optional<AdModel> adModelOptional = adRepository
                 .findById((long) idAd);
@@ -117,21 +105,22 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateCommentAd(int idAd, int idComment, CreateOrUpdateComment updateComment) {
-//        AdModel ad = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-//        CommentModel comment = findEntityByIdOrThrow(commentRepository, (long) idComment, Comment.class);
-        AdModel adModel = (AdModel) commentRepository.findByAd(idAd);
-        CommentModel commentModel = commentRepository.
-                findById((long)idComment).
-                filter(it->it.equals(idComment)).orElseThrow();
-        UserModel author = userRepository.findByUsername(getCurrentUsername());
-        if (adModel.getAuthor().equals(author) && commentModel.getAuthor().equals(author)) {
-            CommentModel savedComment = commentRepository.save(mapper.toCommentModel(updateComment));
-            return mapper.toCommentDto(savedComment);
+        AdModel adModel = adRepository.findById((long) idAd)
+                .orElseThrow(() -> new AdNotFoundException(idAd));
+        UserModel userModel = userRepository.findById(getCurrentUserId())
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        CommentModel commentModel = commentRepository.findById((long) idComment)
+                .orElseThrow(() -> new CommentNotFoundException(idComment));
+        if (!userModel.getId()
+                .equals(commentModel
+                        .getAuthor()
+                        .getId()) && adModel
+                .getPk().equals(commentModel.getAd().getPk())) {
+            throw new UserNotFoundException("No authenticated user found");
         }
-
-//        if (!comment.getAd().getPk().equals(ad.getPk())) {
-//            throw new IllegalArgumentException("CКомментарий не относится к указанному объявлению");
-//        }
-        throw new UserNotFoundException("No authenticated user found");
+        commentModel.setText(updateComment.getText());
+        commentModel.setCreateAt(LocalDateTime.now());
+        commentRepository.save(commentModel);
+        return mapper.toCommentDto(commentModel);
     }
 }

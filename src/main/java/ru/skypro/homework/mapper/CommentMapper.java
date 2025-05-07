@@ -32,7 +32,7 @@ public interface CommentMapper {
     @Mapping(source = "text", target = "text")
     Comment toCommentDto(CommentModel commentModel);
 
-    Comments toCommentsDto(List<CommentModel> commentModelList);
+//    Comments toCommentsDto(List<CommentModel> commentModelList);
 
     /**
      * Преобразует список объектов CommentModel в список DTO Comment.
@@ -52,6 +52,7 @@ public interface CommentMapper {
     @Mapping(target = "pk",ignore = true)
     @Mapping(target = "author",ignore = true)
     @Mapping(target = "createAt",ignore = true)
+    @Mapping(target = "ad", ignore = true)
     CommentModel toCommentModel(CreateOrUpdateComment createOrUpdateComment);
 
     CreateOrUpdateComment toCreateOrUpdateComment(CommentModel commentModel);

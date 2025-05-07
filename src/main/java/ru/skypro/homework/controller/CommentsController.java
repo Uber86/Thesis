@@ -54,7 +54,6 @@ public class CommentsController {
      * @param commentId идентификатор удаляемого комментария.
      */
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public  void deleteCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId) {
         service.deleteComment(adId, commentId);

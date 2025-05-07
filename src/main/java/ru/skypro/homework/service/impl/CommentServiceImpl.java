@@ -100,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
         Optional<CommentModel> commentModelOptional = commentRepository.findById((long) commentId);
         CommentModel commentModel = commentModelOptional
                 .orElseThrow(()-> new CommentNotFoundException(commentId));
-        if (commentModel.getAuthor().getId().equals(userModel.getId())) {
+        if (commentModel.getAuthor().getId().equals(userModel.getId()) || userModel.getRole() == ADMIN) {
             adModel.getComments().remove(commentModel);
             commentRepository.delete(commentModel);
         }

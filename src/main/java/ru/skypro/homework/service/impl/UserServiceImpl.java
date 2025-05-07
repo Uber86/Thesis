@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
@@ -33,6 +34,8 @@ public class UserServiceImpl implements UserService {
     /**
      * Обновление пароля пользователя
      */
+    @Override
+    @Transactional
     public boolean updatePassword(String currentPassword, String newPassword) {
         Long currentUserId = getCurrentUserId();
         UserModel userModel = userRepository.findById(currentUserId)

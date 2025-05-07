@@ -35,16 +35,18 @@ public class UsersController {
      * @return успешное изменение пароля.
      */
     @PostMapping("/set_password")
-    public ResponseEntity<NewPassword> setPassword(@RequestBody NewPassword newPassword) {
+    public ResponseEntity<NewPassword> setPassword(@RequestParam String currentPassword,
+                                                   @RequestParam String newPassword) {
         boolean isUpdated = userService.updatePassword(
-                newPassword.getCurrentPassword(),
-                newPassword.getNewPassword()
+                currentPassword,
+                newPassword
         );
-        if (isUpdated) {
-            return ResponseEntity.ok(newPassword);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(newPassword);
-        }
+//        if (isUpdated) {
+//            return ResponseEntity.ok(newPassword);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(newPassword);
+//        }
+        return null;
     }
 
     /**

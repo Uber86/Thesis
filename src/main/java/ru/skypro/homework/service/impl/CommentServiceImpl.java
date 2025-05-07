@@ -69,6 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
+    @Transactional
     public Comments getAllCommentsByAdId(int idAd) {
         Optional<AdModel> adModelOptional = adRepository
                 .findById((long) idAd);

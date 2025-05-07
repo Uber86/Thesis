@@ -1,5 +1,6 @@
 package ru.skypro.homework.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
@@ -37,7 +38,7 @@ public class Comment {
      * <code>(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)</code>.
      * </p>
      */
-    @Pattern(regexp = "(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createAt;
 
     /**

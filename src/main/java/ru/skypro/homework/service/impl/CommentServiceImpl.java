@@ -6,10 +6,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.AdModel;
@@ -24,6 +26,7 @@ import ru.skypro.homework.service.CommentService;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -66,41 +69,39 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comments getAllCommentsByAdId(int idAd) {
-        List<CommentModel> comment = commentRepository.findByAd(getCurrentUserId());
-        if (getCurrentUserId() == idAd) {
-            List<Comment> toCommentDtoList = mapper.toCommentDtoList(comment);
-            Comments comments = new Comments();
-            comments.setCount(toCommentDtoList.size());
-            comments.setComments(toCommentDtoList);
-            return comments;
-        }
-        throw new UserNotFoundException("No authenticated user found");
-    }
+        Optional<AdModel> adModelOptional = adRepository
+                .findById((long) idAd);
+        AdModel adModel = adModelOptional.orElse(null);
+        List<CommentModel> commentModel = adModel != null ? adModel.getComments() : null;
+        List<Comment> toCommentDtoList = mapper.toCommentDtoList(commentModel);
+        Comments comments = new Comments();
+        comments.setComments(toCommentDtoList);
+        comments.setCount(toCommentDtoList.size());
+        return comments;
 
+    }
 
     @Override
+    @Transactional
     public Comment createNewComment(int idAd, CreateOrUpdateComment createComment) {
-//        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-        List<AdModel> adModel = adRepository.findByPk(idAd);
-        if (adModel != null) {
-            UserModel author = userRepository.findByUsername(getCurrentUsername());
-            if (author == null) {
-                throw new EntityNotFoundException("User entity not found");
-            }
-            CommentModel commentModel = mapper.toCommentModel(createComment);
-            commentModel.setCreateAt(LocalDateTime.now());
-            commentModel.setAd((AdModel) adModel);
-            commentModel.setAuthor(author);
-            CommentModel savedComment = commentRepository.save(commentModel);
-            return mapper.toCommentDto(savedComment);
-        }
-        throw new UserNotFoundException("No authenticated user found");
+        Optional<AdModel> adModelOptional = adRepository
+                .findById((long) idAd);
+        AdModel adModel = adModelOptional.orElseThrow(()-> new AdNotFoundException(idAd));
+        UserModel userModel = userRepository.findById(getCurrentUserId())
+                .orElseThrow(()-> new UserNotFoundException("User not init"));
+        CommentModel commentModel = createComment != null ? mapper.toCommentModel(createComment): null;
+        commentModel.setAuthor(userModel);
+        commentModel.setAd(adModel);
+        commentModel.setCreateAt(LocalDateTime.now());
+        adModel.getComments().add(commentModel);
+        adRepository.save(adModel);
+        return mapper.toCommentDto(commentModel);
     }
 
-//    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
-//        return repository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
-//    }
+    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
+    }
 
 
     @Override

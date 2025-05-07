@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.skypro.homework.dto.Comment;
+import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.model.CommentModel;
 
@@ -30,6 +31,8 @@ public interface CommentMapper {
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "text", target = "text")
     Comment toCommentDto(CommentModel commentModel);
+
+//    Comments toCommentsDto(List<CommentModel> commentModelList);
 
     /**
      * Преобразует список объектов CommentModel в список DTO Comment.

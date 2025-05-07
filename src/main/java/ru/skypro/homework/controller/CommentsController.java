@@ -69,7 +69,6 @@ public class CommentsController {
      * @return обновленное комментарии.
      */
     @PatchMapping("/ads/{adId}/comments/{commentId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public Comment updateCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId,
                                                    @RequestBody CreateOrUpdateComment

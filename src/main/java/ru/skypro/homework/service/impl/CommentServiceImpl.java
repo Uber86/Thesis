@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.skypro.homework.dto.Role.ADMIN;
+
 
 @RequiredArgsConstructor
 @Service
@@ -58,6 +60,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
+    @Transactional
     public Comments getAllCommentsByAdId(int idAd) {
         Optional<AdModel> adModelOptional = adRepository
                 .findById((long) idAd);
@@ -104,6 +107,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public Comment updateCommentAd(int idAd, int idComment, CreateOrUpdateComment updateComment) {
         AdModel adModel = adRepository.findById((long) idAd)
                 .orElseThrow(() -> new AdNotFoundException(idAd));
@@ -111,16 +115,16 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(()-> new UserNotFoundException("User not found"));
         CommentModel commentModel = commentRepository.findById((long) idComment)
                 .orElseThrow(() -> new CommentNotFoundException(idComment));
-        if (!userModel.getId()
+        if (userModel.getId()
                 .equals(commentModel
                         .getAuthor()
-                        .getId()) && adModel
-                .getPk().equals(commentModel.getAd().getPk())) {
-            throw new UserNotFoundException("No authenticated user found");
+                        .getId()) || userModel.getRole() == ADMIN) {
+            commentModel.setText(updateComment.getText());
+            commentModel.setCreateAt(LocalDateTime.now());
+            commentRepository.save(commentModel);
+            return mapper.toCommentDto(commentModel);
+
         }
-        commentModel.setText(updateComment.getText());
-        commentModel.setCreateAt(LocalDateTime.now());
-        commentRepository.save(commentModel);
-        return mapper.toCommentDto(commentModel);
+        throw new UserNotFoundException("No authenticated user found");
     }
 }

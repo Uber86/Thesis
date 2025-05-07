@@ -1,10 +1,6 @@
 package ru.skypro.homework.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
-import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
 
 /**
  * Класс, представляющий комментарий (Comment).
@@ -39,8 +35,7 @@ public class Comment {
      * </p>
      */
 //    @Pattern(regexp = "(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime createAt;
+    private Long createdAt;
 
     /**
      * Уникальный первичный ключ комментария.
@@ -79,12 +74,12 @@ public class Comment {
         this.authorFirstName = authorFirstName;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public Long  getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public void setCreatedAt(Long  createAt) {
+        this.createdAt = createAt;
     }
 
     public int getPk() {

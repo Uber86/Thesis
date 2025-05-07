@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService {
         Long currentUserId = getCurrentUserId();
         UserModel user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
-
         if (updateUser.getFirstName() != null) {
             user.setFirstName(updateUser.getFirstName());
         }
@@ -93,7 +92,6 @@ public class UserServiceImpl implements UserService {
 
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             UserDetails userDetails = usersDetailsService.loadUserByUsername(username);

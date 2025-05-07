@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
         // Логируем ошибку
         System.err.println("Error occurred: " + ex.getMessage());
-
+        ex.printStackTrace();
         // Возвращаем ответ с ошибкой
         return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }

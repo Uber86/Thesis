@@ -74,12 +74,10 @@ public class CommentServiceImpl implements CommentService {
                 .findById((long) idAd);
         AdModel adModel = adModelOptional.orElse(null);
         List<CommentModel> commentModel = adModel != null ? adModel.getComments() : null;
-        List<Comment> toCommentDtoList = mapper.toCommentDtoList(commentModel);
-        Comments comments = new Comments();
-        comments.setComments(toCommentDtoList);
-        comments.setCount(toCommentDtoList.size());
+        Comments comments = mapper.toCommentsDto(commentModel);
+//        comments.setComments(toCommentDtoList);
+//        comments.setCount(toCommentDtoList.size());
         return comments;
-
     }
 
     @Override
@@ -98,13 +96,6 @@ public class CommentServiceImpl implements CommentService {
         adRepository.save(adModel);
         return mapper.toCommentDto(commentModel);
     }
-
-//    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
-//        return repository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
-//    }
-
-
     @Override
     @Transactional
     public void deleteComment(int idAd, int commentId) {
@@ -120,20 +111,6 @@ public class CommentServiceImpl implements CommentService {
             adModel.getComments().remove(commentModel);
             commentRepository.delete(commentModel);
         }
-
-//        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-//        List<AdModel> adModel = adRepository.findByPk(idAd);
-//        UserModel author = userRepository.findByUsername(getCurrentUsername());
-//        CommentModel commentModel = commentRepository.
-//                findById((long)commentId).
-//                filter(it->it.equals(commentId)).orElseThrow();
-//        if (commentModel.getAuthor().equals(author)) {
-//            commentRepository.delete(commentModel);
-//        }
-//////        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);
-////        if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
-////            throw new IllegalArgumentException("Комментарий не относится к указанному объявлению");
-////        }
     }
 
     @Override

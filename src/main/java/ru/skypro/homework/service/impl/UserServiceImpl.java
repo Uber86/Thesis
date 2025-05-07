@@ -78,10 +78,8 @@ public class UserServiceImpl implements UserService {
     public byte[] updateUserImage(String username, MultipartFile imageFile) throws IOException {
         UserModel userModel = userRepository.findByUsername(username);
         byte[] imageBytes = imageFile.getBytes();
-
         userModel.setImage(Arrays.toString(imageBytes));
         userRepository.save(userModel);
-
         return imageBytes;
     }
 
@@ -105,7 +103,6 @@ public class UserServiceImpl implements UserService {
             }
             return user.getId();
         }
-
         throw new UserNotFoundException("No authenticated user found");
     }
 }

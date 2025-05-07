@@ -1,7 +1,6 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.ImageProcessingException;
+import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.model.UserModel;
@@ -17,12 +17,9 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -162,5 +159,14 @@ public class AdServiceImpl implements AdService {
             throw new SecurityException("You do not have permission to modify this ad.");
         }
     }
+    private UserModel getUserModelByUsername(String username) {
+        UserModel user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException("User '" + username + "' not founded");
+        }
+        return user;
+    }
+
+
 
 }

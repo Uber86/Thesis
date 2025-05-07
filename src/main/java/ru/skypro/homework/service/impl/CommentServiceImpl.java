@@ -12,6 +12,7 @@ import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.exception.AdNotFoundException;
+import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.AdModel;
@@ -98,27 +99,38 @@ public class CommentServiceImpl implements CommentService {
         return mapper.toCommentDto(commentModel);
     }
 
-    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
-    }
+//    private <T> T findEntityByIdOrThrow(JpaRepository<T, Long> repository, Long id, Class<?> entityClass) {
+//        return repository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException(entityClass.getSimpleName() + " \n" + "сущность не найдена"));
+//    }
 
 
     @Override
+    @Transactional
     public void deleteComment(int idAd, int commentId) {
+        Optional<AdModel> adModelOptional = adRepository
+                .findById((long) idAd);
+        AdModel adModel = adModelOptional.orElseThrow(() -> new AdNotFoundException(idAd));
+        UserModel userModel = userRepository.findById(getCurrentUserId())
+                .orElseThrow(()-> new UserNotFoundException("User not init"));
+        Optional<CommentModel> commentModelOptional = commentRepository.findById((long) commentId);
+        CommentModel commentModel = commentModelOptional
+                .orElseThrow(()-> new CommentNotFoundException(commentId));
+        adModel.getComments().remove(commentModel);
+        commentRepository.delete(commentModel);
 //        AdModel adModel = findEntityByIdOrThrow(adRepository, (long) idAd, Ad.class);
-        List<AdModel> adModel = adRepository.findByPk(idAd);
-        UserModel author = userRepository.findByUsername(getCurrentUsername());
-        CommentModel commentModel = commentRepository.
-                findById((long)commentId).
-                filter(it->it.equals(commentId)).orElseThrow();
-        if (commentModel.getAuthor().equals(author)) {
-            commentRepository.delete(commentModel);
-        }
-////        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);
-//        if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
-//            throw new IllegalArgumentException("Комментарий не относится к указанному объявлению");
+//        List<AdModel> adModel = adRepository.findByPk(idAd);
+//        UserModel author = userRepository.findByUsername(getCurrentUsername());
+//        CommentModel commentModel = commentRepository.
+//                findById((long)commentId).
+//                filter(it->it.equals(commentId)).orElseThrow();
+//        if (commentModel.getAuthor().equals(author)) {
+//            commentRepository.delete(commentModel);
 //        }
+//////        CommentModel commentModel = findEntityByIdOrThrow(commentRepository, (long) commentId, Comment.class);
+////        if (!commentModel.getAd().getPk().equals(adModel.getPk())) {
+////            throw new IllegalArgumentException("Комментарий не относится к указанному объявлению");
+////        }
     }
 
     @Override

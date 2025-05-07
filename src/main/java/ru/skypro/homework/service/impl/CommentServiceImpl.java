@@ -74,9 +74,10 @@ public class CommentServiceImpl implements CommentService {
                 .findById((long) idAd);
         AdModel adModel = adModelOptional.orElse(null);
         List<CommentModel> commentModel = adModel != null ? adModel.getComments() : null;
-        Comments comments = mapper.toCommentsDto(commentModel);
-//        comments.setComments(toCommentDtoList);
-//        comments.setCount(toCommentDtoList.size());
+        List<Comment> toCommentDtoList = mapper.toCommentDtoList(commentModel);
+        Comments comments = new Comments();
+        comments.setComments(toCommentDtoList);
+        comments.setCount(toCommentDtoList.size());
         return comments;
     }
 

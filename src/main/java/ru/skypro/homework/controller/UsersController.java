@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import ru.skypro.homework.dto.User;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
+import java.security.Principal;
 
 
 /**
@@ -22,6 +24,7 @@ import java.io.IOException;
  * Предоставляет REST API для работы с информацией о пользователе.
  */
 @RestController
+@RequestMapping("/users")
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Пользователи")
 @RequiredArgsConstructor
@@ -50,9 +53,11 @@ public class UsersController {
      *
      * @return объект User, содержащим информацию о пользователе.
      */
-    @GetMapping("/users/me")
-    public User getUserInfo() {
-        return userService.getCurrentUser();
+    @GetMapping("/me")
+    @Operation(summary = "Получение информации об авторизованном пользователе")  // Аннотация Swagger
+    public ResponseEntity<User> getUserInfo() {
+        User user = userService.getCurrentUser();
+        return ResponseEntity.ok(user);
     }
 
     /**
@@ -73,7 +78,7 @@ public class UsersController {
      * @param imageFile файл изображения, который необходимо загрузить.
      * @return ResponseEntity с сообщением об успешном обновлении изображения и кодом состояния 200 (OK).
      */
-    @PatchMapping("/users/me/image")
+    @PatchMapping("/me/image")
     public ResponseEntity<byte[]> updateUserImage(
             @Parameter(description = "Файл изображения для обновления", required = true)
             @RequestPart("image") MultipartFile imageFile,

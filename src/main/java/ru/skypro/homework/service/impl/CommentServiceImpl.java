@@ -76,9 +76,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Comment createNewComment(int idAd, CreateOrUpdateComment createComment) {
-        Optional<AdModel> adModelOptional = adRepository
-                .findById((long) idAd);
-        AdModel adModel = adModelOptional.orElseThrow(()-> new AdNotFoundException(idAd));
+        AdModel adModel = adRepository.findById((long) idAd)
+                .orElseThrow(()-> new AdNotFoundException(idAd));
         UserModel userModel = userRepository.findById(getCurrentUserId())
                 .orElseThrow(()-> new UserNotFoundException("User not init"));
         CommentModel commentModel = createComment != null ? mapper.toCommentModel(createComment): null;
@@ -92,13 +91,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(int idAd, int commentId) {
-        Optional<AdModel> adModelOptional = adRepository
-                .findById((long) idAd);
-        AdModel adModel = adModelOptional.orElseThrow(() -> new AdNotFoundException(idAd));
+        AdModel adModel = adRepository
+                .findById((long) idAd).orElseThrow(() -> new AdNotFoundException(idAd));
         UserModel userModel = userRepository.findById(getCurrentUserId())
                 .orElseThrow(()-> new UserNotFoundException("User not init"));
-        Optional<CommentModel> commentModelOptional = commentRepository.findById((long) commentId);
-        CommentModel commentModel = commentModelOptional
+        CommentModel commentModel = commentRepository.findById((long) commentId)
                 .orElseThrow(()-> new CommentNotFoundException(commentId));
         if (commentModel.getAuthor().getId().equals(userModel.getId()) || userModel.getRole() == ADMIN) {
             adModel.getComments().remove(commentModel);
@@ -115,16 +112,19 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(()-> new UserNotFoundException("User not found"));
         CommentModel commentModel = commentRepository.findById((long) idComment)
                 .orElseThrow(() -> new CommentNotFoundException(idComment));
-        if (userModel.getId()
+        if ((userModel.getId()
                 .equals(commentModel
                         .getAuthor()
-                        .getId()) || userModel.getRole() == ADMIN) {
+                        .getId()) && adModel.getPk()
+                .equals(commentModel
+                        .getAd().getPk())) || userModel
+                .getRole() == ADMIN) {
             commentModel.setText(updateComment.getText());
             commentModel.setCreateAt(LocalDateTime.now());
             commentRepository.save(commentModel);
             return mapper.toCommentDto(commentModel);
 
         }
-        throw new UserNotFoundException("No authenticated user found");
+        throw new RuntimeException("Comment user update");
     }
 }

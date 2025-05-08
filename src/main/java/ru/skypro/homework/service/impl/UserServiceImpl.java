@@ -83,23 +83,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UpdateUser updateUserInfo(UpdateUser updateUser) {
         Long currentUserId = getCurrentUserId();
         UserModel user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
-        if (updateUser.getFirstName() != null) {
+        if (updateUser.getFirstName() != null &&
+                updateUser.getLastName() != null &&
+                updateUser.getPhone() != null) {
             user.setFirstName(updateUser.getFirstName());
-        }
-        if (updateUser.getLastName() != null) {
             user.setLastName(updateUser.getLastName());
-        }
-        if (updateUser.getPhone() != null) {
             user.setPhone(updateUser.getPhone());
         }
-
         UserModel savedUser = userRepository.save(user);
-
         return userMapper.toUpdateUserDto(savedUser);
     }
 

@@ -3,8 +3,10 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.AdNotFoundException;
@@ -12,14 +14,18 @@ import ru.skypro.homework.exception.ImageProcessingException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.AdModel;
+import ru.skypro.homework.model.CommentModel;
 import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.security.UsersDetailsService;
 import ru.skypro.homework.service.AdService;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import static ru.skypro.homework.dto.Role.ADMIN;
 
 @RequiredArgsConstructor
 @Service
@@ -28,8 +34,10 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final UserRepository userRepository;
     private final AdMapper adMapper;
+    private final UsersDetailsService usersDetailsService;
 
     @Override
+    @Transactional
     public Ads getAllAds() {
         List<AdModel> adModels = adRepository.findAll();
         List<Ad> adDtos = adMapper.toDtoList(adModels);
@@ -41,6 +49,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    @Transactional
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
         UserModel user = getCurrentUser();
 
@@ -68,6 +77,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    @Transactional
     public ExtendedAd getAd(int id) {
         AdModel ad = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
@@ -76,26 +86,55 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    @Transactional
     public void deleteAd(int id) {
-        AdModel existing = adRepository.findById((long) id)
+        UserModel userModel = userRepository.findById(getCurrentUserId()).
+                orElseThrow(() -> new UserNotFoundException("User not init"));
+        AdModel adModel = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
-
-        checkUserPermission(existing);
-
-        adRepository.deleteById((long) id);
+        if ((userModel.getId()
+                .equals(adModel
+                        .getAuthor()
+                        .getId())) || userModel
+                .getRole() == ADMIN) {
+            adRepository.delete(adModel);
+        }
+//        AdModel existing = adRepository.findById((long) id)
+//                .orElseThrow(() -> new AdNotFoundException(id));
+//
+//        checkUserPermission(existing);
+//
+//        adRepository.deleteById((long) id);
     }
 
     @Override
+    @Transactional
     public Ad updateAd(int id, CreateOrUpdateAd createOrUpdateAd) {
-        AdModel existing = adRepository.findById((long) id)
+        UserModel userModel = userRepository.findById(getCurrentUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not init"));
+        AdModel adModel = adRepository.findById((long)id)
                 .orElseThrow(() -> new AdNotFoundException(id));
+        if ((userModel.getId()
+                .equals(adModel
+                        .getAuthor()
+                        .getId())) || userModel
+                .getRole() == ADMIN) {
+            adModel.setTitle(createOrUpdateAd.getTitle());
+            adModel.setPrice(createOrUpdateAd.getPrice());
+            adModel.setDescription(createOrUpdateAd.getDescription());
+            adRepository.save(adModel);
+        }
+        return adMapper.toDto(adModel);
 
-        checkUserPermission(existing);
-
-        existing.setTitle(createOrUpdateAd.getTitle());
-        existing.setDescription(createOrUpdateAd.getDescription());
-
-        return adMapper.toDto(adRepository.save(existing));
+//        AdModel existing = adRepository.findById((long) id)
+//                .orElseThrow(() -> new AdNotFoundException(id));
+//
+//        checkUserPermission(existing);
+//
+//        existing.setTitle(createOrUpdateAd.getTitle());
+//        existing.setDescription(createOrUpdateAd.getDescription());
+//
+//        return adMapper.toDto(adRepository.save(existing));
     }
 
     @Override
@@ -165,6 +204,20 @@ public class AdServiceImpl implements AdService {
             throw new UserNotFoundException("User '" + username + "' not founded");
         }
         return user;
+    }
+
+    private Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            UserDetails userDetails = usersDetailsService.loadUserByUsername(username);
+            UserModel user = userRepository.findByUsername(userDetails.getUsername());
+            if (user == null){
+                throw new UserNotFoundException("User not found");
+            }
+            return user.getId();
+        }
+        throw new UserNotFoundException("No authenticated user found");
     }
 
 

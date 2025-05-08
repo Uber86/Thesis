@@ -67,7 +67,6 @@ public class AdController {
      * @param id идентификатор объявления, которое нужно удалить.
      */
     @DeleteMapping("/ads/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteAd(@PathVariable int id) {
         adService.deleteAd(id);
 
@@ -81,7 +80,6 @@ public class AdController {
      * @return Обновленный объект Ad.
      */
     @PatchMapping("/ads/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public Ad updateAd(
             @PathVariable("id") int id,
             @RequestBody CreateOrUpdateAd createOrUpdateAd) {
@@ -109,8 +107,8 @@ public class AdController {
      */
     @PatchMapping("/ads/{id}/image")
     public ResponseEntity<byte[]> updateImage(
-            @RequestPart("id") int id,
-            @RequestPart("image") MultipartFile image) {
+            @RequestParam("id") int id,
+            @RequestParam("image") MultipartFile image) {
         byte[] updatedImage = adService.updateImage(id, image);
         String contentType = image.getContentType();
         return ResponseEntity.ok()

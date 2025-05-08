@@ -51,9 +51,8 @@ public class UsersController {
      * @return объект User, содержащим информацию о пользователе.
      */
     @GetMapping("/users/me")
-    public ResponseEntity<User> getUserInfo() {
-        User user = userService.getCurrentUser();
-        return ResponseEntity.ok(user);
+    public User getUserInfo() {
+        return userService.getCurrentUser();
     }
 
     /**

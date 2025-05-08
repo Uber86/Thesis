@@ -13,7 +13,11 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.model.AdModel;
+import ru.skypro.homework.model.Image;
 import ru.skypro.homework.service.AdService;
+
+import java.io.IOException;
 
 
 /**
@@ -21,6 +25,7 @@ import ru.skypro.homework.service.AdService;
  * Предоставляет REST API для создания, получения, обновления и удаления объявлений.
  */
 @RestController
+@RequestMapping("/ads")
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Объявления")
 @RequiredArgsConstructor
@@ -44,9 +49,9 @@ public class AdController {
      * @param image изображение
      * @return объект ad
      */
-    @PostMapping("/ads")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Ad addAd(@RequestPart("properties") CreateOrUpdateAd properties,
-                    @RequestPart("image") MultipartFile image) {
+                    @RequestPart("image") MultipartFile image) throws IOException {
         return adService.addAd(properties, image);
     }
 
@@ -56,7 +61,7 @@ public class AdController {
      * @param id идентификатор объявления.
      * @return extendedAd, если объявление найдено.
      */
-    @GetMapping("/ads/{id}")
+    @GetMapping("/{id}")
     public ExtendedAd getAd(@PathVariable int id) {
         return adService.getAd(id);
     }
@@ -66,7 +71,7 @@ public class AdController {
      *
      * @param id идентификатор объявления, которое нужно удалить.
      */
-    @DeleteMapping("/ads/{id}")
+    @DeleteMapping("/{id}")
     public void deleteAd(@PathVariable int id) {
         adService.deleteAd(id);
 
@@ -79,7 +84,7 @@ public class AdController {
      * @param createOrUpdateAd объект с новыми данными для обновления объявления.
      * @return Обновленный объект Ad.
      */
-    @PatchMapping("/ads/{id}")
+    @PatchMapping("/{id}")
     public Ad updateAd(
             @PathVariable("id") int id,
             @RequestBody CreateOrUpdateAd createOrUpdateAd) {
@@ -92,7 +97,7 @@ public class AdController {
      * @param authentication объект пользователя, который аутентифицирован в системе.
      * @return Объект Ads, содержащим объявления текущего пользователя.
      */
-    @GetMapping("/ads/me")
+    @GetMapping("/me")
     public Ads getAdsMe(Authentication authentication) {
         String username = ((User) authentication.getPrincipal()).getUsername();
         return adService.getAdsByUserName(username);
@@ -102,17 +107,14 @@ public class AdController {
      * Обновляет изображение объявления.
      *
      * @param id идентификатор объявления, для которого нужно обновить изображение.
-     * @param image файл изображения, который нужно загрузить.
+     * @param imageFile файл изображения, который нужно загрузить.
      * @return ResponseEntity с байтовым массивом изображения.
      */
-    @PatchMapping("/ads/{id}/image")
-    public ResponseEntity<byte[]> updateImage(
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateImage(
             @RequestParam("id") int id,
-            @RequestParam("image") MultipartFile image) {
-        byte[] updatedImage = adService.updateImage(id, image);
-        String contentType = image.getContentType();
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(updatedImage);
+            @RequestParam("image") MultipartFile imageFile) throws IOException {
+        String imageId = adService.updateImage(id, imageFile);
+        return ResponseEntity.ok("/images/" + imageId);
     }
 }

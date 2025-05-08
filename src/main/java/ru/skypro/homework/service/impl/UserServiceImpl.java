@@ -1,6 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-import com.fasterxml.jackson.core.exc.InputCoercionException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,28 +12,43 @@ import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
+import ru.skypro.homework.model.Image;
 import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.security.UsersDetailsService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Optional;
-
-import static java.util.Base64.getDecoder;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UsersDetailsService usersDetailsService;
+    private final ImageServiceImpl imageService;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, UsersDetailsService usersDetailsService) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserMapper userMapper,
+                           UsersDetailsService usersDetailsService,
+                           ImageServiceImpl imageService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.usersDetailsService = usersDetailsService;
+        this.imageService = imageService;
+    }
+
+    private Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            UserDetails userDetails = usersDetailsService.loadUserByUsername(username);
+            UserModel user = userRepository.findByUsername(userDetails.getUsername());
+            if (user == null){
+                throw new UserNotFoundException("User not found");
+            }
+            return user.getId();
+        }
+        throw new UserNotFoundException("No authenticated user found");
     }
 
     /**
@@ -62,18 +76,6 @@ public class UserServiceImpl implements UserService {
 
         return true; // Пароль успешно обновлён
     }
-//        Long currentUserId = getCurrentUserId();
-//        UserModel userModel = userRepository.findById(currentUserId)
-//                .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
-//        String encoded = Base64.getEncoder().encodeToString(newPassword.getBytes());
-//        if (encoded.equals(userModel.getPassword())) {
-//            throw new RuntimeException();
-//        }
-//        userMapper.updatePasswordFromDto(newPassword, userModel);
-//        userModel.setPassword(newPassword);
-//        userRepository.save(userModel);
-//        return true;
-//    }
 
     @Override
     @Transactional
@@ -101,33 +103,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public byte[] updateUserImage(String username, MultipartFile imageFile) throws IOException {
+    public String updateUserImage(String username, MultipartFile imageFile) throws IOException {
         UserModel userModel = userRepository.findByUsername(username);
-        byte[] imageBytes = imageFile.getBytes();
-        userModel.setImage(Arrays.toString(imageBytes));
+        Image image = imageService.saveImage(imageFile);
+        userModel.setImage(image.getId());
         userRepository.save(userModel);
-        return imageBytes;
-    }
-
-    private UserModel getUserModelByUsername(String username) {
-        UserModel user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException("User '" + username + "' not founded");
-        }
-        return user;
-    }
-
-    private Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            UserDetails userDetails = usersDetailsService.loadUserByUsername(username);
-            UserModel user = userRepository.findByUsername(userDetails.getUsername());
-            if (user == null){
-                throw new UserNotFoundException("User not found");
-            }
-            return user.getId();
-        }
-        throw new UserNotFoundException("No authenticated user found");
+        return image.getId();
     }
 }

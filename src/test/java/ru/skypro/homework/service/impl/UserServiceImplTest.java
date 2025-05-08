@@ -81,7 +81,7 @@ class UserServiceImplTest {
     @Test
     void getCurrentUser_shouldReturnUserDto() {
         when(usersDetailsService.loadUserByUsername("testuser")).thenReturn((UserDetails) userModel);
-        when(userRepository.findById(1)).thenReturn(Optional.of(userModel));
+        when(userRepository.findById(1l)).thenReturn(Optional.of(userModel));
         when(userMapper.toDto(userModel)).thenReturn(userDto);
 
         User result = userService.getCurrentUser();
@@ -93,7 +93,7 @@ class UserServiceImplTest {
     @Test
     void updateUserInfo_shouldUpdateAndReturnUpdateUserDto() {
         when(usersDetailsService.loadUserByUsername("testuser")).thenReturn((UserDetails) userModel);
-        when(userRepository.findById(1)).thenReturn(Optional.of(userModel));
+        when(userRepository.findById(1l)).thenReturn(Optional.of(userModel));
         when(userRepository.save(userModel)).thenReturn(userModel);
         when(userMapper.toUpdateUserDto(userModel)).thenReturn(updateUserDto);
 
@@ -110,7 +110,7 @@ class UserServiceImplTest {
     @Test
     void updatePassword_shouldUpdatePassword() {
         when(usersDetailsService.loadUserByUsername("testuser")).thenReturn((UserDetails) userModel);
-        when(userRepository.findById(1)).thenReturn(Optional.of(userModel));
+        when(userRepository.findById(1l)).thenReturn(Optional.of(userModel));
         boolean result = userService.updatePassword("oldPassword", "newPassword");
 
         assertTrue(result);

@@ -1,11 +1,13 @@
 package ru.skypro.homework.service.impl;
 
+import com.fasterxml.jackson.core.exc.InputCoercionException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.exception.UserNotFoundException;
@@ -17,7 +19,10 @@ import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
+
+import static java.util.Base64.getDecoder;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,20 +41,40 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public boolean updatePassword(String currentPassword, String newPassword) {
+    public boolean updatePassword(NewPassword newPassword) {
         Long currentUserId = getCurrentUserId();
         UserModel userModel = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
-        if (!userModel.getPassword().equals(currentPassword)) {
-            throw new IllegalArgumentException(
-                    "Неверный текущий пароль для пользователя " + userModel.getUsername());
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        String decodedCurrentPassword = new String(Base64.getDecoder()
+                .decode(newPassword.getCurrentPassword()));
+        String decodedStoredPassword = new String(Base64.getDecoder()
+                .decode(userModel.getPassword()));
+        if (!decodedStoredPassword.equals(decodedCurrentPassword)) {
+            return false;
         }
-        userMapper.updatePasswordFromDto(newPassword, userModel);
-        userModel.setPassword(newPassword);
+        String decodedNewPassword = new String(Base64.getDecoder()
+                .decode(newPassword.getNewPassword()));
+        String encodedNewPassword = Base64.getEncoder().
+                encodeToString(decodedNewPassword.getBytes());
+        userModel.setPassword(encodedNewPassword);
         userRepository.save(userModel);
         return true;
     }
+//        Long currentUserId = getCurrentUserId();
+//        UserModel userModel = userRepository.findById(currentUserId)
+//                .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
+//        String encoded = Base64.getEncoder().encodeToString(newPassword.getBytes());
+//        if (encoded.equals(userModel.getPassword())) {
+//            throw new RuntimeException();
+//        }
+//        userMapper.updatePasswordFromDto(newPassword, userModel);
+//        userModel.setPassword(newPassword);
+//        userRepository.save(userModel);
+//        return true;
+//    }
 
+    @Override
+    @Transactional
     public User getCurrentUser() {
         Long currentUserId = getCurrentUserId();
         return userRepository.findById(currentUserId)
@@ -57,6 +82,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User" + currentUserId + " not found"));
     }
 
+    @Override
+    @Transactional
     public UpdateUser updateUserInfo(UpdateUser updateUser) {
         Long currentUserId = getCurrentUserId();
         UserModel user = userRepository.findById(currentUserId)

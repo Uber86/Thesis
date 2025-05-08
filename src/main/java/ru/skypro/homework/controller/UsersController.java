@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
@@ -35,18 +36,13 @@ public class UsersController {
      * @return успешное изменение пароля.
      */
     @PostMapping("/set_password")
-    public ResponseEntity<NewPassword> setPassword(@RequestParam String currentPassword,
-                                                   @RequestParam String newPassword) {
-        boolean isUpdated = userService.updatePassword(
-                currentPassword,
-                newPassword
-        );
-//        if (isUpdated) {
-//            return ResponseEntity.ok(newPassword);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(newPassword);
-//        }
-        return null;
+    public ResponseEntity<Boolean> setPassword(@RequestBody NewPassword newPassword) {
+        boolean isUpdated = userService.updatePassword(newPassword);
+        if (isUpdated) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     /**

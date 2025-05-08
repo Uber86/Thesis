@@ -9,6 +9,8 @@ import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
 
+import static ru.skypro.homework.dto.Role.ADMIN;
+import static ru.skypro.homework.dto.Role.USER;
 
 
 @Service
@@ -33,9 +35,13 @@ public class AuthServiceImpl implements AuthService {
         if (repository.existsByEmail(register.getUsername())) {
             return false;
         }
+        if(register.getRole() == ADMIN){
+            return false;
+        }
         UserModel user = mapper.toUserModel(register);
         user.setEmail(register.getUsername());
         user.setPassword(encoder.encode(register.getPassword()));
+        user.setRole(USER);
         repository.save(user);
         return true;
     }

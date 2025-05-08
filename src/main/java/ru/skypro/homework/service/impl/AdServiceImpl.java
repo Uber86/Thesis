@@ -52,7 +52,6 @@ public class AdServiceImpl implements AdService {
     @Transactional
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
         UserModel user = getCurrentUser();
-
         AdModel adModel = adMapper.toModel(properties);
         adModel.setAuthor(user);
         return adMapper.toDto(adRepository.save(adModel));

@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import ru.skypro.homework.dto.Comment;
+import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.model.AdModel;
 import ru.skypro.homework.model.CommentModel;
@@ -20,7 +22,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CommentServiceImplTest {
+public class CommentServiceTest {
 
     @Mock
     private CommentRepository commentRepository;
@@ -70,7 +72,7 @@ class CommentServiceImplTest {
 
     @Test
     void createNewCommentSuccess() {
-        when(adRepository.findById(1l)).thenReturn(Optional.of(adModel));
+        when(adRepository.findById(1L)).thenReturn(Optional.of(adModel));
         when(userRepository.findAll()).thenReturn(List.of(userModel));
         when(commentMapper.toCommentModel(createOrUpdateComment)).thenReturn(commentModel);
         when(commentRepository.save(commentModel)).thenReturn(commentModel);
@@ -80,10 +82,40 @@ class CommentServiceImplTest {
 
         assertNotNull(result);
         assertEquals("text", result.getText());
-        verify(adRepository).findById(1l);
+        verify(adRepository).findById(1L);
         verify(userRepository).findAll();
         verify(commentMapper).toCommentModel(createOrUpdateComment);
         verify(commentRepository).save(commentModel);
         verify(commentMapper).toCommentDto(commentModel);
+    }
+    @Test
+    void createNewComment_WhenAdNotFound_ThrowsAdNotFoundException() {
+        // Arrange
+        when(adRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(AdNotFoundException.class, () -> {
+            commentService.createNewComment(1, createOrUpdateComment);
+        });
+
+        verify(adRepository).findById(1L);
+        verifyNoInteractions(userRepository, commentMapper, commentRepository);
+    }
+    @Test
+    void getAllCommentsByAdId_WhenAdExists_ReturnsComments() {
+        // Arrange
+        when(adRepository.findById(1L)).thenReturn(Optional.of(adModel));
+        when(commentMapper.toCommentDtoList(adModel.getComments())).thenReturn(List.of(commentDto));
+
+        // Act
+        Comments result = commentService.getAllCommentsByAdId(1);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getCount());
+        assertEquals("text", result.getComments().get(0).getText());
+
+        verify(adRepository).findById(1L);
+        verify(commentMapper).toCommentDtoList(adModel.getComments());
     }
 }

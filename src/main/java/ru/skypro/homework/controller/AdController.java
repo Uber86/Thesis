@@ -38,7 +38,7 @@ public class AdController {
      *
      * @return объект Ads, содержащим все объявления.
      */
-    @GetMapping("/ads")
+    @GetMapping
     public Ads getAllAds() {
         return adService.getAllAds();
     }

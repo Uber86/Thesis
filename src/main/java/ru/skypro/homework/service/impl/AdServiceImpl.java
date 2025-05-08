@@ -128,6 +128,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    @Transactional
     public Ads getAdsByUserId(int userId) {
         List<AdModel> ads = adRepository.findByPk(userId);
         List<Ad> adDtos = adMapper.toDtoList(ads);
@@ -140,6 +141,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    @Transactional
     public String updateImage(long id, MultipartFile imageFile) throws IOException {
         AdModel adModel = adRepository.findById(id)
                 .orElseThrow(() -> new AdNotFoundException(id));

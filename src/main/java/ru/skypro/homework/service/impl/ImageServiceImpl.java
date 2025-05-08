@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.model.Image;
 import ru.skypro.homework.repository.ImageRepository;
@@ -25,6 +26,7 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
+    @Transactional
     public Image saveImage(MultipartFile file) throws IOException {
         Image image = new Image();
         String uuid = UUID.randomUUID().toString();
@@ -42,12 +44,14 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional
     public byte[] loadImage(String fileName) throws IOException {
         Path filePath = Paths.get(imagesDirect, fileName);
         return Files.readAllBytes(filePath);
     }
 
     @Override
+    @Transactional
     public Image findById(String id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
     }

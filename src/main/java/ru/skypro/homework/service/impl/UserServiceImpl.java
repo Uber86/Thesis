@@ -87,6 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UpdateUser updateUserInfo(UpdateUser updateUser) {
         Long currentUserId = getCurrentUserId();
         UserModel user = userRepository.findById(currentUserId)
@@ -103,6 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public String updateUserImage(String username, MultipartFile imageFile) throws IOException {
         UserModel userModel = userRepository.findByUsername(username);
         Image image = imageService.saveImage(imageFile);

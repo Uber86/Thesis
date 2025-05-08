@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.exc.InputCoercionException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,20 +46,21 @@ public class UserServiceImpl implements UserService {
         Long currentUserId = getCurrentUserId();
         UserModel userModel = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        String decodedCurrentPassword = new String(Base64.getDecoder()
-                .decode(newPassword.getCurrentPassword()));
-        String decodedStoredPassword = new String(Base64.getDecoder()
-                .decode(userModel.getPassword()));
-        if (!decodedStoredPassword.equals(decodedCurrentPassword)) {
-            return false;
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        // Проверяем, совпадает ли текущий пароль с сохранённым паролем
+        if (!passwordEncoder.matches(newPassword.getCurrentPassword(), userModel.getPassword())) {
+            return false; // Текущий пароль не совпадает
         }
-        String decodedNewPassword = new String(Base64.getDecoder()
-                .decode(newPassword.getNewPassword()));
-        String encodedNewPassword = Base64.getEncoder().
-                encodeToString(decodedNewPassword.getBytes());
+
+        // Кодируем новый пароль
+        String encodedNewPassword = passwordEncoder.encode(newPassword.getNewPassword());
+
+        // Обновляем пароль пользователя
         userModel.setPassword(encodedNewPassword);
         userRepository.save(userModel);
-        return true;
+
+        return true; // Пароль успешно обновлён
     }
 //        Long currentUserId = getCurrentUserId();
 //        UserModel userModel = userRepository.findById(currentUserId)

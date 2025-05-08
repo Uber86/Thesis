@@ -112,12 +112,10 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(()-> new UserNotFoundException("User not found"));
         CommentModel commentModel = commentRepository.findById((long) idComment)
                 .orElseThrow(() -> new CommentNotFoundException(idComment));
-        if ((userModel.getId()
+        if (userModel.getId()
                 .equals(commentModel
                         .getAuthor()
-                        .getId()) && adModel.getPk()
-                .equals(commentModel
-                        .getAd().getPk())) || userModel
+                        .getId())  || userModel
                 .getRole() == ADMIN) {
             commentModel.setText(updateComment.getText());
             commentModel.setCreateAt(LocalDateTime.now());

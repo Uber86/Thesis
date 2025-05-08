@@ -99,7 +99,7 @@ public class AdController {
      */
     @GetMapping("/me")
     public Ads getAdsMe(Authentication authentication) {
-        String username = ((User) authentication.getPrincipal()).getUsername();
+        String username = authentication.getName();
         return adService.getAdsByUserName(username);
     }
 
@@ -112,7 +112,7 @@ public class AdController {
      */
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateImage(
-            @RequestParam("id") int id,
+            @PathVariable("id") int id,
             @RequestParam("image") MultipartFile imageFile) throws IOException {
         String imageId = adService.updateImage(id, imageFile);
         return ResponseEntity.ok("/images/" + imageId);

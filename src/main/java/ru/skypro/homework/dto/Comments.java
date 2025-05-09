@@ -21,7 +21,7 @@ public class Comments {
     /**
      * Список комментариев.
      */
-    private List<Comment> comments;
+    private List<Comment> results;
 
     public Comments() {
     }
@@ -35,10 +35,10 @@ public class Comments {
     }
 
     public List<Comment> getComments() {
-        return comments;
+        return results;
     }
 
     public void setComments(List<Comment> comments) {
-        this.comments = comments;
+        this.results = comments;
     }
 }

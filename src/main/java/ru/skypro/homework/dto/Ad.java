@@ -10,7 +10,7 @@ import lombok.Data;
  * </p>
  */
 @Data
-public class Ad {
+public class Ad extends ExtendedAd {
 
     /**
      * Идентификатор автора объявления.
@@ -53,7 +53,7 @@ public class Ad {
     }
 
     public void setImage(String image) {
-        this.image = image;
+        this.image = "/ads/image/" + image;
     }
 
     public int getPk() {

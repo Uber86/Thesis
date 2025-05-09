@@ -26,10 +26,12 @@ public interface CommentMapper {
     @Mapping(source = "author.id", target = "author")
     @Mapping(source = "author.image", target = "authorImage")
     @Mapping(source = "author.firstName", target = "authorFirstName")
-    @Mapping(source = "createAt", target = "createAt")
+    @Mapping(target = "createdAt", expression = "java(commentModel.getCreateAt().toEpochSecond(java.time.ZoneOffset.ofTotalSeconds(0)))")
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "text", target = "text")
     Comment toCommentDto(CommentModel commentModel);
+
+//    Comments toCommentsDto(List<CommentModel> commentModelList);
 
     /**
      * Преобразует список объектов CommentModel в список DTO Comment.
@@ -49,6 +51,11 @@ public interface CommentMapper {
     @Mapping(target = "pk",ignore = true)
     @Mapping(target = "author",ignore = true)
     @Mapping(target = "createAt",ignore = true)
+    @Mapping(target = "ad", ignore = true)
     CommentModel toCommentModel(CreateOrUpdateComment createOrUpdateComment);
+
+    CreateOrUpdateComment toCreateOrUpdateComment(CommentModel commentModel);
+
+
 
 }

@@ -2,9 +2,6 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.Pattern;
-import java.time.LocalDateTime;
-
 /**
  * Класс, представляющий комментарий (Comment).
  * <p>
@@ -37,8 +34,8 @@ public class Comment {
      * <code>(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)</code>.
      * </p>
      */
-    @Pattern(regexp = "(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)")
-    private LocalDateTime createAt;
+//    @Pattern(regexp = "(\\d{2}\\.\\d{2}\\.\\d{4}\\s\\d{2}:\\d{2})(\\s+)(.+)")
+    private Long createdAt;
 
     /**
      * Уникальный первичный ключ комментария.
@@ -77,12 +74,12 @@ public class Comment {
         this.authorFirstName = authorFirstName;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public Long  getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public void setCreatedAt(Long  createAt) {
+        this.createdAt = createAt;
     }
 
     public int getPk() {

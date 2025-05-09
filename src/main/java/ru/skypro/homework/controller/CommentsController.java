@@ -2,11 +2,11 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.service.CommentService;
 
 /**
  * Контроллер для управления комментариями к объявлениям.
@@ -18,6 +18,8 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 @RequiredArgsConstructor
 public class CommentsController {
 
+    public final CommentService service;
+
     /**
      * Получает все комментарии для указанного объявления.
      *
@@ -26,7 +28,7 @@ public class CommentsController {
      */
     @GetMapping("/ads/{id}/comments")
     public Comments getCommendsAd(@PathVariable int id) {
-        return new Comments();
+        return service.getAllCommentsByAdId(id);
     }
 
     /**
@@ -40,7 +42,7 @@ public class CommentsController {
     public Comment addCommentAd(@PathVariable("id") int id,
                                                 @RequestBody CreateOrUpdateComment
                                                         createOrUpdateComment) {
-        return new Comment();
+        return service.createNewComment(id, createOrUpdateComment);
     }
 
     /**
@@ -50,8 +52,9 @@ public class CommentsController {
      * @param commentId идентификатор удаляемого комментария.
      */
     @DeleteMapping("/ads/{adId}/comments/{commentId}")
-    public  void  deleteCommentAd(@PathVariable("adId") int adId,
+    public  void deleteCommentAd(@PathVariable("adId") int adId,
                                                    @PathVariable("commentId") int commentId) {
+        service.deleteComment(adId, commentId);
     }
 
     /**
@@ -67,6 +70,6 @@ public class CommentsController {
                                                    @PathVariable("commentId") int commentId,
                                                    @RequestBody CreateOrUpdateComment
                                                               createOrUpdateComment) {
-        return new Comment();
+        return service.updateCommentAd(adId, commentId, createOrUpdateComment);
     }
 }

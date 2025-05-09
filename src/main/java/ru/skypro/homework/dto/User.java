@@ -2,7 +2,6 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
-import java.util.List;
 
 /**
  * Класс, представляющий пользователя в системе (User).
@@ -101,7 +100,7 @@ public class User {
     }
 
     public String getImage() {
-        return image;
+        return image = "/ads/image/" + image;
     }
 
     public void setImage(String image) {

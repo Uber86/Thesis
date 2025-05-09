@@ -1,14 +1,17 @@
 package ru.skypro.homework.ControllerTest;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -16,7 +19,11 @@ import ru.skypro.homework.controller.AuthorizationController;
 import ru.skypro.homework.dto.Login;
 import ru.skypro.homework.service.AuthService;
 
+@ExtendWith(MockitoExtension.class)
 public class AuthorizationControllerTest {
+
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password123";
 
     @InjectMocks
     private AuthorizationController authorizationController;
@@ -29,7 +36,6 @@ public class AuthorizationControllerTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(authorizationController).build();
         objectMapper = new ObjectMapper();
     }
@@ -37,27 +43,33 @@ public class AuthorizationControllerTest {
     @Test
     public void testLoginSuccess() throws Exception {
         Login login = new Login();
-        login.setUsername("username");
-        login.setPassword("password123");
-        when(authService.login(login.getUsername(), login.getPassword())).thenReturn(true);
+        login.setUsername(USERNAME);
+        login.setPassword(PASSWORD);
+
+        when(authService.login(USERNAME, PASSWORD)).thenReturn(true);
 
         mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(login)))
-                .andExpect(status().isOk());
-    }
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(login)));
 
+        verify(authService, times(1)).login(USERNAME, PASSWORD);
+    }
 
     @Test
     public void testLoginUnauthorized() throws Exception {
         Login login = new Login();
-        login.setUsername("username");
-        login.setPassword("password123");
-        when(authService.login(login.getUsername(), login.getPassword())).thenReturn(false);
+        login.setUsername(USERNAME);
+        login.setPassword(PASSWORD);
+
+        when(authService.login(USERNAME, PASSWORD)).thenReturn(false);
 
         mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(login)))
                 .andExpect(status().isUnauthorized());
+
+        verify(authService, times(1)).login(USERNAME, PASSWORD);
     }
 }

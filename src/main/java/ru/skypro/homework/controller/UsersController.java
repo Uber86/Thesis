@@ -1,29 +1,37 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 
-import java.util.Arrays;
+import ru.skypro.homework.service.UserService;
 
-import static ru.skypro.homework.dto.Role.USER;
+import java.io.IOException;
+
 
 /**
  * Контроллер для управления пользователями.
  * Предоставляет REST API для работы с информацией о пользователе.
  */
 @RestController
+@RequestMapping("/users")
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Пользователи")
 @RequiredArgsConstructor
 public class UsersController {
+
+    public final UserService userService;
+
 
     /**
      * Устанавливает новый пароль для пользователя.
@@ -32,8 +40,13 @@ public class UsersController {
      * @return успешное изменение пароля.
      */
     @PostMapping("/set_password")
-    public NewPassword setPassword(@RequestBody NewPassword newPassword) {
-        return new NewPassword();
+    public ResponseEntity<Boolean> setPassword(@RequestBody NewPassword newPassword) {
+        boolean isUpdated = userService.updatePassword(newPassword);
+        if (isUpdated) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     /**
@@ -41,10 +54,11 @@ public class UsersController {
      *
      * @return объект User, содержащим информацию о пользователе.
      */
-    @GetMapping("/users/me")
-    public User getUserInfo() {
-        User user = new User();
-        return user;
+    @GetMapping("/me")
+    @Operation(summary = "Получение информации об авторизованном пользователе")  // Аннотация Swagger
+    public ResponseEntity<User> getUserInfo() {
+        User user = userService.getCurrentUser();
+        return ResponseEntity.ok(user);
     }
 
     /**
@@ -53,9 +67,10 @@ public class UsersController {
      * @param updateUser объект, содержащий обновленные данные пользователя.
      * @return успешное обновление.
      */
-    @PatchMapping("/users/me")
-    public UpdateUser updateUserInfo(@RequestBody UpdateUser updateUser) {
-        return new UpdateUser();
+    @PatchMapping("/me")
+    public ResponseEntity<UpdateUser> updateUserInfo(@RequestBody UpdateUser updateUser) {
+        UpdateUser updatedUser = userService.updateUserInfo(updateUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**
@@ -64,11 +79,13 @@ public class UsersController {
      * @param imageFile файл изображения, который необходимо загрузить.
      * @return ResponseEntity с сообщением об успешном обновлении изображения и кодом состояния 200 (OK).
      */
-    @PatchMapping("/users/me/image")
+    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUserImage(
             @Parameter(description = "Файл изображения для обновления", required = true)
-            @RequestParam("image") MultipartFile imageFile) {
-
-        return ResponseEntity.ok(String.valueOf(imageFile));
+            @RequestPart("image") MultipartFile imageFile,
+            Authentication authentication) throws IOException {
+        String username = authentication.getName();
+        String imageId = userService.updateUserImage(username, imageFile);
+        return ResponseEntity.ok("/images/" + imageId);
     }
 }

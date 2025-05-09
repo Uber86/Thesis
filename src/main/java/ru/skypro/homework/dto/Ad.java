@@ -53,7 +53,7 @@ public class Ad extends ExtendedAd {
     }
 
     public void setImage(String image) {
-        this.image = image;
+        this.image = "/ads/image/" + image;
     }
 
     public int getPk() {

@@ -2,6 +2,7 @@ package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -116,5 +117,17 @@ public class AdController {
             @RequestParam("image") MultipartFile imageFile) throws IOException {
         String imageId = adService.updateImage(id, imageFile);
         return ResponseEntity.ok("/images/" + imageId);
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String id) {
+        try {
+            byte[] imageBytes = adService.getImage(id);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG) // Укажите правильный тип контента
+                    .body(imageBytes);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

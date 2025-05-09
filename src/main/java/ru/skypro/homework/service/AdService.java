@@ -79,4 +79,6 @@ public interface AdService {
      * @return объект Ads, содержащий список всех объявлений данного пользователя.
      */
     Ads getAdsByUserName(String username);
+
+    byte[] getImage(String id) throws IOException;
 }

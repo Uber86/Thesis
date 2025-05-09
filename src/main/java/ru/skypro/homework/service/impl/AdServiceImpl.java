@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.AdNotFoundException;
-import ru.skypro.homework.exception.ImageProcessingException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.model.AdModel;
@@ -22,7 +21,6 @@ import ru.skypro.homework.security.UsersDetailsService;
 import ru.skypro.homework.service.AdService;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import static ru.skypro.homework.dto.Role.ADMIN;
@@ -51,7 +49,7 @@ public class AdServiceImpl implements AdService {
             String username = authentication.getName();
             UserDetails userDetails = usersDetailsService.loadUserByUsername(username);
             UserModel user = userRepository.findByUsername(userDetails.getUsername());
-            if (user == null){
+            if (user == null) {
                 throw new UserNotFoundException("User not found");
             }
             return user.getId();
@@ -112,7 +110,7 @@ public class AdServiceImpl implements AdService {
     public Ad updateAd(int id, CreateOrUpdateAd createOrUpdateAd) {
         UserModel userModel = userRepository.findById(getCurrentUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not init"));
-        AdModel adModel = adRepository.findById((long)id)
+        AdModel adModel = adRepository.findById((long) id)
                 .orElseThrow(() -> new AdNotFoundException(id));
         if ((userModel.getId()
                 .equals(adModel
@@ -168,5 +166,12 @@ public class AdServiceImpl implements AdService {
         ads.setResults(adList);
 
         return ads;
+    }
+
+    @Override
+    public byte[] getImage(String id) throws IOException {
+        Image image = imageService.findById(id);
+        return imageService.loadImage(image.getFileName());
+
     }
 }

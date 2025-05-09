@@ -100,7 +100,7 @@ public class User {
     }
 
     public String getImage() {
-        return image;
+        return image = "/ads/image/" + image;
     }
 
     public void setImage(String image) {

@@ -2,8 +2,6 @@ package ru.skypro.homework.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Entity

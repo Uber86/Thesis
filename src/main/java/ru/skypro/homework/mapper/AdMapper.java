@@ -3,7 +3,6 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.factory.Mappers;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
@@ -13,11 +12,6 @@ import java.util.List;
 
 @Mapper (componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AdMapper {
-
-    /**
-     * Синглтон экземпляр AdMapper.
-     */
-    AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
 
     /**
      * Преобразует объект AdModel в DTO Ad.

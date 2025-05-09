@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.model.UserModel;
 import ru.skypro.homework.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.Column;
+
 
 import static ru.skypro.homework.dto.Role.ADMIN;
 
